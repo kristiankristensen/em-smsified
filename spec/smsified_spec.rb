@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 # These tests are all local unit tests
-FakeWeb.allow_net_connect = false
+WebMock.disable_net_connect!
 
 describe "Smsified" do
   before(:all) do
@@ -9,6 +9,7 @@ describe "Smsified" do
     @password       = 'pass'
     @address        = '14155551212'
     @sender_address = '13035551212'
+    @request_uri = "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests"
   end
   
   describe "Helpers" do
@@ -49,11 +50,12 @@ describe "Smsified" do
       @one_api = Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
       
       @message_sent = { "resourceReference" => { "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/tel%3A%2B#{@sender_address}/requests/795bd02c8e343b2dfd673b67dd0ee55a" } }
-      
-      FakeWeb.register_uri(:post, 
-                           "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests",
-                           :status => ["200", "OK"],
-                           :body   => @message_sent.to_json)                           
+    end
+
+    before(:each) do
+      #Because WebMock configures a global RSpect WebMock.reset!, we need to set up the stub before each spec instead of on :all
+      stub_request(:post, @request_uri).
+        to_return(:status => 200, :body => @message_sent.to_json, :headers => {})
     end
    
     it "Should get errors if instantiating without all of the right parameters" do
@@ -118,7 +120,9 @@ describe "Smsified" do
     it "Should send an SMS" do
       response = @one_api.send_sms(:address => @address, :message => 'Hola from RSpec!', :sender_address => @sender_address)
       response.data.should eql @message_sent
-      FakeWeb.last_request.body.should eql "address=14155551212&message=Hola+from+RSpec%21"
+
+      a_request(:post, @request_uri).
+        with{ |req| req.body == "address=14155551212&message=Hola+from+RSpec%21"}.should have_been_made
     end
     
     it "Should send an SMS to multiple destinations" do
@@ -126,7 +130,9 @@ describe "Smsified" do
                                    :message        => 'Hola from RSpec!', 
                                    :sender_address => @sender_address)
       response.data.should eql @message_sent
-      FakeWeb.last_request.body.should eql "address=14155551212&address=13035551212&message=Hola+from+RSpec%21"
+
+      a_request(:post, @request_uri).
+        with{ |req| req.body == "address=14155551212&address=13035551212&message=Hola+from+RSpec%21"}.should have_been_made
     end
     
     it "Should raise an error if you pass an unknown method name" do
@@ -217,19 +223,20 @@ describe "Smsified" do
                                           ]
                                       }
                                   }
-        
-        FakeWeb.register_uri(:get, 
-                             "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/inbound/subscriptions?destinationAddress=#{@address}",
-                             :status => ["200", "OK"],
-                             :body   => @no_subscription.to_json)
+        end
+before(:each) do
+        stub_request(:get, 
+                     "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/inbound/subscriptions?destinationAddress=#{@address}").
+          to_return(:status => ["200", "OK"],
+                    :body   => @no_subscription.to_json)
                              
-        FakeWeb.register_uri(:get, 
-                             "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/inbound/subscriptions?destinationAddress=#{@sender_address}",
+        stub_request(:get, 
+                             "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/inbound/subscriptions?destinationAddress=#{@sender_address}").to_return(
                              :status => ["200", "OK"],
                              :body   => @inbound_subscriptions.to_json)
-                             
-        FakeWeb.register_uri(:get, 
-                             "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/subscriptions?senderAddress=#{@sender_address}",
+
+        stub_request(:get, 
+                             "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/subscriptions?senderAddress=#{@sender_address}").to_return(
                              :status => ["200", "OK"],
                              :body   => @outbound_subscriptions.to_json)
       end
@@ -262,30 +269,32 @@ describe "Smsified" do
       before(:all) do
         @inbound_subscription  = { "resourceReference" => { "resourceURL" => "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions/e636368b7fddac0e93e34ae03bad33dd" } }
         @outbound_subscription = { "resourceReference" => { "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/subscriptions/4bc465cd394c9f5e78802af5ad6bb442" } }
-        
-        FakeWeb.register_uri(:post, 
-                             %r|https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/inbound/subscriptions?|,
-                             :status => ["200", "OK"],
-                             :body   => @inbound_subscription.to_json)
-                                          
-        FakeWeb.register_uri(:post, 
-                             %r|https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/17177455076/subscriptions?|,
-                             :status => ["200", "OK"],
-                             :body   => @outbound_subscription.to_json)
-      end
+        @inbound_uri = %r|https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/inbound/subscriptions?|
+        @outbound_uri = %r|https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/17177455076/subscriptions?|
+        end
       
       it 'Should create an inbound subscription' do
+        stub_request(:post, @inbound_uri).
+          to_return(:status => ["200", "OK"],
+                    :body   => @inbound_subscription.to_json)
+
         result = @subscriptions.create_inbound_subscription('17177455076', :notify_url => 'http://foobar.com')
         result.http.code.should eql '200'
         result.data.should eql @inbound_subscription
-        FakeWeb.last_request.body.should eql "destinationAddress=17177455076&notifyURL=http%3A%2F%2Ffoobar.com"
+        a_request(:post, @inbound_uri).
+        with{ |req| req.body == "destinationAddress=17177455076&notifyURL=http%3A%2F%2Ffoobar.com"}.should have_been_made
       end
     
       it 'Should create an outbound subscription' do
+        stub_request(:post, @outbound_uri).
+          to_return(:status => ["200", "OK"],
+                    :body   => @outbound_subscription.to_json)
+
         result = @subscriptions.create_outbound_subscription('17177455076', :notify_url => 'http://foobar.com')
         result.http.code.should eql '200'
         result.data.should eql @outbound_subscription
-        FakeWeb.last_request.body.should eql "notifyURL=http%3A%2F%2Ffoobar.com"
+        a_request(:post, @outbound_uri).
+        with{ |req| req.body == "notifyURL=http%3A%2F%2Ffoobar.com"}.should have_been_made
       end
     end
     
@@ -293,34 +302,42 @@ describe "Smsified" do
       before(:all) do
         @inbound_subscription  = { "resourceReference" => { "resourceURL" => "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions/e636368b7fddac0e93e34ae03bad33dd" } }
         @outbound_subscription = { "resourceReference" => { "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/subscriptions/4bc465cd394c9f5e78802af5ad6bb442" } }
-        
-        FakeWeb.register_uri(:post, 
-                             "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/subscriptions",
-                             :status => ["200", "OK"],
-                             :body   => @outbound_subscription.to_json)
+
+        @inbound_uri = %r|https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/inbound/subscriptions?|
+
+        @outbound_uri = "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/subscriptions"
       end
       
       it 'Should update an inbound subscription' do
+        stub_request(:post, @inbound_uri).
+          to_return(:status => ["200", "OK"],
+                    :body   => @inbound_subscription.to_json)
+
         result = @subscriptions.update_inbound_subscription('c880c96f161f6220d4977b29b4bfc111', :notify_url => 'http://foobar1.com')
 
         result.http.code.should eql '200'
         result.data.should eql @inbound_subscription
-        FakeWeb.last_request.body.should eql "notifyURL=http%3A%2F%2Ffoobar1.com"
+        a_request(:post, @inbound_uri).
+        with{ |req| req.body == "notifyURL=http%3A%2F%2Ffoobar1.com"}.should have_been_made
       end
       
       it 'Should update an outbound subscription' do
+        stub_request(:post, @outbound_uri).
+          to_return(:status => ["200", "OK"],
+                    :body   => @outbound_subscription.to_json)
+
         result = @subscriptions.update_outbound_subscription(@sender_address, :notify_url => 'http://foobar.com')
         result.http.code.should eql '200'
         result.data.should eql @outbound_subscription
-        FakeWeb.last_request.body.should eql "notifyURL=http%3A%2F%2Ffoobar.com"
+        a_request(:post, @outbound_uri).
+          with{ |req| req.body == "notifyURL=http%3A%2F%2Ffoobar.com" }.should have_been_made
       end
     end
     
     describe 'Deleting subscriptions' do
-      before(:all) do
-        FakeWeb.register_uri(:delete, 
-                             %r|https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/|,
-                             :status => ["204", "OK"])        
+      before(:each) do
+        stub_request(:delete, %r|https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/|).
+to_return(:status => ["204", "OK"])        
       end
       
       it "Should delete an inbound subscription" do
@@ -396,22 +413,21 @@ describe "Smsified" do
                              "created" => "2011-05-13T20:27:53.660+0000"
                          }
                       ]
-                      
-      FakeWeb.register_uri(:get, 
-                           "https://#{@username}:#{@password}@api.smsified.com/v1/messages/74ae6147f915eabf87b35b9ea30c5916",
-                           :status => ["200", "OK"],
+end
+    before(:each) do                      
+stub_request(:get, "https://#{@username}:#{@password}@api.smsified.com/v1/messages/74ae6147f915eabf87b35b9ea30c5916").
+        to_return(:status => ["200", "OK"],
                            :body   => @message.to_json)
       
-      FakeWeb.register_uri(:get, 
-                           "https://#{@username}:#{@password}@api.smsified.com/v1/messages?start=2011-05-12&end=2011-05-12",
-                           :status => ["200", "OK"],
-                           :content_type=>"application/json",
+      stub_request(:get, "https://#{@username}:#{@password}@api.smsified.com/v1/messages?start=2011-05-12&end=2011-05-12").
+        to_return(:status => ["200", "OK"],
+                  :headers => {"Content-Type" => "application/json"},
                            :body   => @message_range.to_json)
-      
-      FakeWeb.register_uri(:get, 
-                           "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests/795bd02c8e343b2dfd673b67dd0ee55a/deliveryInfos",
-                           :status => ["200", "OK"],
-                           :body   => @delivery_status.to_json)
+
+      stub_request(:get, "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests/795bd02c8e343b2dfd673b67dd0ee55a/deliveryInfos").
+        to_return(:status => ["200", "OK"],
+
+                  :body   => @delivery_status.to_json)
     end
     
     it "Should instantiate a Reporting object" do
