@@ -134,14 +134,6 @@ describe "Smsified" do
       a_request(:post, @request_uri).
         with{ |req| req.body == "address=14155551212&address=13035551212&message=Hola+from+RSpec%21"}.should have_been_made
     end
-    
-    it "Should raise an error if you pass an unknown method name" do
-      begin 
-        @one_api.foobar
-      rescue => e
-        e.to_s.should eql "Unknown method"
-      end
-    end
   end
   
   describe 'Subscriptions' do

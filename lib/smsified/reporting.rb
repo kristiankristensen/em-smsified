@@ -1,33 +1,5 @@
 module Smsified
-  class Reporting
-    include HTTParty
-    format :json
-    
-    ##
-    # Intantiate a new class to work with reporting
-    # 
-    # @param [required, Hash] params to create the Reporting object with
-    # @option params [required, String] :username username to authenticate with
-    # @option params [required, String] :password to authenticate with
-    # @option params [optional, String] :base_uri of an alternative location of SMSified
-    # @option params [optional, String] :destination_address to use with subscriptions
-    # @option params [optional, String] :sender_address to use with subscriptions
-    # @option params [optional, Boolean] :debug to turn on the HTTparty debugging to stdout
-    # @example
-    #   subscription = Subscription.new :username => 'user', :password => '123'
-    def initialize(options)
-      raise ArgumentError, 'an options Hash is required' if !options.instance_of?(Hash)
-      raise ArgumentError, ':username required' if options[:username].nil?
-      raise ArgumentError, ':password required' if options[:password].nil?
-      
-      self.class.debug_output $stdout if options[:debug]
-      self.class.base_uri options[:base_uri] || SMSIFIED_ONEAPI_PUBLIC_URI
-      @auth = { :username => options[:username], :password => options[:password] }
-      
-      @destination_address = options[:destination_address]
-      @sender_address      = options[:sender_address]
-    end
-    
+  module ReportingModule    
     ##
     # Get the delivery status of an outstanding SMS request
     #
@@ -44,7 +16,7 @@ module Smsified
       
       options[:sender_address] = options[:sender_address] || @sender_address
 
-      Response.new self.class.get("/smsmessaging/outbound/#{options[:sender_address]}/requests/#{options[:request_id]}/deliveryInfos", :basic_auth => @auth, :headers    => SMSIFIED_HTTP_HEADERS)
+      Response.new get("/smsmessaging/outbound/#{options[:sender_address]}/requests/#{options[:request_id]}/deliveryInfos", @auth, SMSIFIED_HTTP_HEADERS)
     end
     
     ##
@@ -55,7 +27,7 @@ module Smsified
     # @example
     #   reporting.retrieve_sms '74ae6147f915eabf87b35b9ea30c5916'
     def retrieve_sms(message_id)
-      Response.new self.class.get("/messages/#{message_id}", :basic_auth => @auth, :headers    => SMSIFIED_HTTP_HEADERS)
+      Response.new get("/messages/#{message_id}", @auth, SMSIFIED_HTTP_HEADERS)
     end
     
     ##
@@ -66,7 +38,20 @@ module Smsified
     # @example
     #   reporting.search_sms 'start=2011-02-14&end=2011-02-15'
     def search_sms(query_string)
-      Response.new self.class.get("/messages?#{query_string}", :basic_auth => @auth, :headers    => SMSIFIED_HTTP_HEADERS)
+      Response.new get("/messages?#{query_string}", @auth, SMSIFIED_HTTP_HEADERS)
+    end
+  end
+
+
+  class Reporting < Base
+    include ReportingModule
+    ##
+    # Intantiate a new class to work with reporting
+    # 
+    # @example
+    #   subscription = Subscription.new :username => 'user', :password => '123'
+    def initialize(options)
+      super(options)
     end
   end
 end

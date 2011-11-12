@@ -1,41 +1,14 @@
 module Smsified
-  SMSIFIED_ONEAPI_PUBLIC_URI = 'https://api.smsified.com/v1'
-  SMSIFIED_HTTP_HEADERS      = { 'Content-Type' => 'application/x-www-form-urlencoded','Accept'=>'application/json' }
-  
-  class OneAPI
+  class OneAPI < Base
     include Helpers
-    
-    include HTTParty
-    format :json
-    
+    include SubscriptionsModule
+    include ReportingModule
+
     ##
-    # Intantiate a new class to work with OneAPI
-    # 
-    # @param [required, Hash] params to create the user
-    # @option params [required, String] :username username to authenticate with
-    # @option params [required, String] :password to authenticate with
-    # @option params [optional, String] :base_uri of an alternative location of SMSified
-    # @option params [optional, String] :destination_address to use with subscriptions
-    # @option params [optional, String] :sender_address to use with subscriptions
-    # @option params [optional, Boolean] :debug to turn on the HTTparty debugging to stdout
-    # @raise [ArgumentError] if :username is not passed as an option
-    # @raise [ArgumentError] if :password is not passed as an option
     # @example 
     #   one_api = OneAPI.new :username => 'user', :password => '123'
     def initialize(options)
-      raise ArgumentError, 'an options Hash is required' if !options.instance_of?(Hash)
-      raise ArgumentError, ':username required' if options[:username].nil?
-      raise ArgumentError, ':password required' if options[:password].nil?
-      
-      self.class.debug_output $stdout if options[:debug]
-      self.class.base_uri options[:base_uri] || SMSIFIED_ONEAPI_PUBLIC_URI
-      @auth = { :username => options[:username], :password => options[:password] }
-      
-      @destination_address = options[:destination_address]
-      @sender_address      = options[:sender_address]
-      
-      @subscriptions = Subscriptions.new(options)
-      @reporting     = Reporting.new(options)
+      super(options)
     end
     
     ##
@@ -64,28 +37,10 @@ module Smsified
       query_options.delete(:sender_address)
       query_options = camelcase_keys(query_options)
 
-      Response.new self.class.post("/smsmessaging/outbound/#{options[:sender_address]}/requests",
-                                   :body       => build_query_string(query_options),
-                                   :basic_auth => @auth,
-                                   :headers    => SMSIFIED_HTTP_HEADERS)
-    end
-    
-    ##
-    # Dispatches method calls to other objects for subscriptions and reporting
-    def method_missing(method, *args)
-      if method.to_s.match /subscription/
-        if args.size == 2
-          @subscriptions.send method, args[0], args[1]
-        else
-          @subscriptions.send method, args[0]
-        end
-      else
-        if method == :delivery_status || method == :retrieve_sms || method == :search_sms
-          @reporting.send method, args[0]
-        else
-          raise RuntimeError, 'Unknown method'
-        end
-      end
+      Response.new post("/smsmessaging/outbound/#{options[:sender_address]}/requests",
+                                   build_query_string(query_options),
+                                   @auth,
+                                   SMSIFIED_HTTP_HEADERS)
     end
   end
 end

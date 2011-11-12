@@ -1,35 +1,5 @@
 module Smsified
-  class Subscriptions
-    include Helpers
-        
-    include HTTParty
-    format :json
-    
-    ##
-    # Intantiate a new class to work with subscriptions
-    # 
-    # @param [required, Hash] params to create the user
-    # @option params [required, String] :username username to authenticate with
-    # @option params [required, String] :password to authenticate with
-    # @option params [optional, String] :base_uri of an alternative location of SMSified
-    # @option params [optional, String] :destination_address to use with subscriptions
-    # @option params [optional, String] :sender_address to use with subscriptions
-    # @option params [optional, Boolean] :debug to turn on the HTTparty debugging to stdout
-    # @example
-    #   subscription = Subscription.new :username => 'user', :password => '123'
-    def initialize(options)
-      raise ArgumentError, 'an options Hash is required' if !options.instance_of?(Hash)
-      raise ArgumentError, ':username required' if options[:username].nil?
-      raise ArgumentError, ':password required' if options[:password].nil?
-      
-      self.class.debug_output $stdout if options[:debug]
-      self.class.base_uri options[:base_uri] || SMSIFIED_ONEAPI_PUBLIC_URI
-      @auth = { :username => options[:username], :password => options[:password] }
-      
-      @destination_address = options[:destination_address]
-      @sender_address      = options[:sender_address]
-    end
-
+  module SubscriptionsModule
     ##
     # Creates an inbound subscription
     # 
@@ -46,11 +16,11 @@ module Smsified
     def create_inbound_subscription(destination_address, options)
       query = options.merge({ :destination_address => destination_address })
       
-      Response.new self.class.post("/smsmessaging/inbound/subscriptions", 
-                                   :basic_auth => @auth,
-                                   :body       => camelcase_keys(query),
-                                   :headers    => SMSIFIED_HTTP_HEADERS
-                                   )
+      Response.new post("/smsmessaging/inbound/subscriptions", 
+                        camelcase_keys(query),
+                        @auth,
+                        SMSIFIED_HTTP_HEADERS
+                        )
 
     end
     
@@ -65,11 +35,11 @@ module Smsified
     # @example
     #   subscriptions.create_outbound_subscription('tel:+14155551212', :notify_url => 'http://foobar.com')    
     def create_outbound_subscription(sender_address, options)
-      Response.new self.class.post("/smsmessaging/outbound/#{sender_address}/subscriptions", 
-                                   :basic_auth => @auth,
-                                   :body       => build_query_string(options),
-                                   :headers    => SMSIFIED_HTTP_HEADERS
-                                   )
+      Response.new post("/smsmessaging/outbound/#{sender_address}/subscriptions", 
+                        build_query_string(options),
+                        @auth,
+                        SMSIFIED_HTTP_HEADERS
+                        )
     end
     
     ##
@@ -80,7 +50,7 @@ module Smsified
     # @example
     #   subscriptions.delete_inbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c')
     def delete_inbound_subscription(subscription_id)
-      Response.new self.class.delete("/smsmessaging/inbound/subscriptions/#{subscription_id}", :basic_auth => @auth, :headers    => SMSIFIED_HTTP_HEADERS)
+      Response.new delete("/smsmessaging/inbound/subscriptions/#{subscription_id}",  @auth,SMSIFIED_HTTP_HEADERS)
     end
     
     ##
@@ -91,7 +61,7 @@ module Smsified
     # @example
     #   subscriptions.delete_outbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c')
     def delete_outbound_subscription(sender_address)
-      Response.new self.class.delete("/smsmessaging/outbound/subscriptions/#{sender_address}", :basic_auth => @auth, :headers    => SMSIFIED_HTTP_HEADERS)
+      Response.new delete("/smsmessaging/outbound/subscriptions/#{sender_address}", @auth,SMSIFIED_HTTP_HEADERS)
     end
     
     ##
@@ -102,7 +72,7 @@ module Smsified
     # @example
     #   subscriptions.inbound_subscriptions('tel:+14155551212')
     def inbound_subscriptions(destination_address)
-      Response.new self.class.get("/smsmessaging/inbound/subscriptions?destinationAddress=#{destination_address}", :basic_auth => @auth, :headers    => SMSIFIED_HTTP_HEADERS)
+      Response.new get("/smsmessaging/inbound/subscriptions?destinationAddress=#{destination_address}",  @auth, SMSIFIED_HTTP_HEADERS)
     end
 
     ##
@@ -113,7 +83,7 @@ module Smsified
     # @example
     #   subscriptions.outbound_subscriptions('tel:+14155551212')
     def outbound_subscriptions(sender_address)
-      Response.new self.class.get("/smsmessaging/outbound/subscriptions?senderAddress=#{sender_address}", :basic_auth => @auth, :headers    => SMSIFIED_HTTP_HEADERS)
+      Response.new get("/smsmessaging/outbound/subscriptions?senderAddress=#{sender_address}", @auth,SMSIFIED_HTTP_HEADERS)
     end
     
     ##
@@ -128,11 +98,11 @@ module Smsified
     # @example
     #   subscriptions.update_inbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c', :notify_url => 'foobar')
     def update_inbound_subscription(subscription_id, options)
-      Response.new self.class.post("/smsmessaging/inbound/subscriptions/#{subscription_id}", 
-                                   :basic_auth => @auth,
-                                   :body       => build_query_string(options),
-                                   :headers    => SMSIFIED_HTTP_HEADERS
-                                   )
+      Response.new post("/smsmessaging/inbound/subscriptions/#{subscription_id}", 
+                        build_query_string(options),
+                        @auth,
+                        SMSIFIED_HTTP_HEADERS
+                        )
     end
     
     ##
@@ -147,11 +117,23 @@ module Smsified
     # @example
     #   subscriptions.update_outbound_subscription('tel:+14155551212', :notify_url => 'foobar')
     def update_outbound_subscription(sender_address, options)
-      Response.new self.class.post("/smsmessaging/outbound/#{sender_address}/subscriptions", 
-                                   :basic_auth => @auth,
-                                   :body       => build_query_string(options),
-                                   :headers    => SMSIFIED_HTTP_HEADERS
-                                   )
+      Response.new post("/smsmessaging/outbound/#{sender_address}/subscriptions",                                   build_query_string(options), 
+                        @auth,
+                        SMSIFIED_HTTP_HEADERS
+                        )
+    end
+  end
+
+  class Subscriptions < Base
+    include Helpers
+    include SubscriptionsModule        
+    ##
+    # Intantiate a new class to work with subscriptions
+    # 
+    # @example
+    #   subscription = Subscription.new :username => 'user', :password => '123'
+    def initialize(options)
+      super(options)
     end
   end
 end
