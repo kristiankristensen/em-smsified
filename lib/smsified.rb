@@ -4,9 +4,10 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
  httparty
  time
  smsified/helpers 
- smsified/oneapi 
+ smsified/base
+ smsified/response 
  smsified/subscriptions 
  smsified/reporting 
- smsified/response 
+ smsified/oneapi 
  smsified/incoming_message
 ).each { |lib| require lib }
