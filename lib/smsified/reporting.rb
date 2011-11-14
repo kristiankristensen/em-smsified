@@ -16,7 +16,7 @@ module Smsified
       
       options[:sender_address] = options[:sender_address] || @sender_address
 
-      Response.new get("/smsmessaging/outbound/#{options[:sender_address]}/requests/#{options[:request_id]}/deliveryInfos", @auth, SMSIFIED_HTTP_HEADERS)
+      get("/smsmessaging/outbound/#{options[:sender_address]}/requests/#{options[:request_id]}/deliveryInfos", @auth, SMSIFIED_HTTP_HEADERS)
     end
     
     ##
@@ -27,7 +27,7 @@ module Smsified
     # @example
     #   reporting.retrieve_sms '74ae6147f915eabf87b35b9ea30c5916'
     def retrieve_sms(message_id)
-      Response.new get("/messages/#{message_id}", @auth, SMSIFIED_HTTP_HEADERS)
+      get("/messages/#{message_id}", @auth, SMSIFIED_HTTP_HEADERS)
     end
     
     ##
@@ -38,7 +38,7 @@ module Smsified
     # @example
     #   reporting.search_sms 'start=2011-02-14&end=2011-02-15'
     def search_sms(query_string)
-      Response.new get("/messages?#{query_string}", @auth, SMSIFIED_HTTP_HEADERS)
+      get("/messages?#{query_string}", @auth, SMSIFIED_HTTP_HEADERS)
     end
   end
 

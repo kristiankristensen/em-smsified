@@ -33,20 +33,20 @@ class Base
 
 
   def get(url, auth, headers)
-    return self.class.get(url, 
+    return Response.new self.class.get(url, 
                           :basic_auth => auth, 
                           :headers => headers)
   end
 
   def post(url, body, auth, headers)
-    return self.class.post(url,
+    return Response.new self.class.post(url,
                                    :body       => body,
                                    :basic_auth => auth,
                                    :headers    => headers)
   end
 
   def delete(url, auth, headers)
-    return self.class.delete(url, 
+    return Response.new self.class.delete(url, 
                              :basic_auth => auth, 
                              :headers    => headers)
   end

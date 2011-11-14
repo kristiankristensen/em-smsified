@@ -37,7 +37,7 @@ module Smsified
       query_options.delete(:sender_address)
       query_options = camelcase_keys(query_options)
 
-      Response.new post("/smsmessaging/outbound/#{options[:sender_address]}/requests",
+      post("/smsmessaging/outbound/#{options[:sender_address]}/requests",
                                    build_query_string(query_options),
                                    @auth,
                                    SMSIFIED_HTTP_HEADERS)
