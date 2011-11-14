@@ -16,11 +16,11 @@ module Smsified
     def create_inbound_subscription(destination_address, options)
       query = options.merge({ :destination_address => destination_address })
       
-      Response.new post("/smsmessaging/inbound/subscriptions", 
-                        camelcase_keys(query),
-                        @auth,
-                        SMSIFIED_HTTP_HEADERS
-                        )
+      post("/smsmessaging/inbound/subscriptions", 
+           camelcase_keys(query),
+           @auth,
+           SMSIFIED_HTTP_HEADERS
+           )
 
     end
     
@@ -35,11 +35,11 @@ module Smsified
     # @example
     #   subscriptions.create_outbound_subscription('tel:+14155551212', :notify_url => 'http://foobar.com')    
     def create_outbound_subscription(sender_address, options)
-      Response.new post("/smsmessaging/outbound/#{sender_address}/subscriptions", 
-                        build_query_string(options),
-                        @auth,
-                        SMSIFIED_HTTP_HEADERS
-                        )
+      post("/smsmessaging/outbound/#{sender_address}/subscriptions", 
+           build_query_string(options),
+           @auth,
+           SMSIFIED_HTTP_HEADERS
+           )
     end
     
     ##
@@ -50,7 +50,7 @@ module Smsified
     # @example
     #   subscriptions.delete_inbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c')
     def delete_inbound_subscription(subscription_id)
-      Response.new delete("/smsmessaging/inbound/subscriptions/#{subscription_id}",  @auth,SMSIFIED_HTTP_HEADERS)
+      delete("/smsmessaging/inbound/subscriptions/#{subscription_id}",  @auth,SMSIFIED_HTTP_HEADERS)
     end
     
     ##
@@ -61,7 +61,7 @@ module Smsified
     # @example
     #   subscriptions.delete_outbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c')
     def delete_outbound_subscription(sender_address)
-      Response.new delete("/smsmessaging/outbound/subscriptions/#{sender_address}", @auth,SMSIFIED_HTTP_HEADERS)
+      delete("/smsmessaging/outbound/subscriptions/#{sender_address}", @auth,SMSIFIED_HTTP_HEADERS)
     end
     
     ##
@@ -72,7 +72,7 @@ module Smsified
     # @example
     #   subscriptions.inbound_subscriptions('tel:+14155551212')
     def inbound_subscriptions(destination_address)
-      Response.new get("/smsmessaging/inbound/subscriptions?destinationAddress=#{destination_address}",  @auth, SMSIFIED_HTTP_HEADERS)
+      get("/smsmessaging/inbound/subscriptions?destinationAddress=#{destination_address}",  @auth, SMSIFIED_HTTP_HEADERS)
     end
 
     ##
@@ -83,7 +83,7 @@ module Smsified
     # @example
     #   subscriptions.outbound_subscriptions('tel:+14155551212')
     def outbound_subscriptions(sender_address)
-      Response.new get("/smsmessaging/outbound/subscriptions?senderAddress=#{sender_address}", @auth,SMSIFIED_HTTP_HEADERS)
+      get("/smsmessaging/outbound/subscriptions?senderAddress=#{sender_address}", @auth,SMSIFIED_HTTP_HEADERS)
     end
     
     ##
@@ -98,11 +98,11 @@ module Smsified
     # @example
     #   subscriptions.update_inbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c', :notify_url => 'foobar')
     def update_inbound_subscription(subscription_id, options)
-      Response.new post("/smsmessaging/inbound/subscriptions/#{subscription_id}", 
-                        build_query_string(options),
-                        @auth,
-                        SMSIFIED_HTTP_HEADERS
-                        )
+      post("/smsmessaging/inbound/subscriptions/#{subscription_id}", 
+           build_query_string(options),
+           @auth,
+           SMSIFIED_HTTP_HEADERS
+           )
     end
     
     ##
@@ -117,10 +117,10 @@ module Smsified
     # @example
     #   subscriptions.update_outbound_subscription('tel:+14155551212', :notify_url => 'foobar')
     def update_outbound_subscription(sender_address, options)
-      Response.new post("/smsmessaging/outbound/#{sender_address}/subscriptions",                                   build_query_string(options), 
-                        @auth,
-                        SMSIFIED_HTTP_HEADERS
-                        )
+      post("/smsmessaging/outbound/#{sender_address}/subscriptions",                                   build_query_string(options), 
+           @auth,
+           SMSIFIED_HTTP_HEADERS
+           )
     end
   end
 
