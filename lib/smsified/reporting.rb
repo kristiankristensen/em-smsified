@@ -10,13 +10,13 @@ module Smsified
     # @raise [ArgumentError] of :sender_address is not passed here when not passed on instantiating the object
     # @example
     #   one_api.delivery_status :request_id => 'f359193765f6a3149ca76a4508e21234', :sender_address => '14155551212'
-    def delivery_status(options)
+    def delivery_status(options, &blk)
       raise ArgumentError, 'an options Hash is required' if !options.instance_of?(Hash)
       raise ArgumentError, ':sender_address is required' if options[:sender_address].nil? && @sender_address.nil?
       
       options[:sender_address] = options[:sender_address] || @sender_address
 
-      get("/smsmessaging/outbound/#{options[:sender_address]}/requests/#{options[:request_id]}/deliveryInfos", @auth, SMSIFIED_HTTP_HEADERS)
+      get("/smsmessaging/outbound/#{options[:sender_address]}/requests/#{options[:request_id]}/deliveryInfos", @auth, SMSIFIED_HTTP_HEADERS, &blk)
     end
     
     ##
@@ -26,8 +26,8 @@ module Smsified
     # @return [Object] A Response Object with http and data instance methods
     # @example
     #   reporting.retrieve_sms '74ae6147f915eabf87b35b9ea30c5916'
-    def retrieve_sms(message_id)
-      get("/messages/#{message_id}", @auth, SMSIFIED_HTTP_HEADERS)
+    def retrieve_sms(message_id, &blk)
+      get("/messages/#{message_id}", @auth, SMSIFIED_HTTP_HEADERS, &blk)
     end
     
     ##
@@ -37,8 +37,8 @@ module Smsified
     # @return [Object] A Response Object with http and data instance methods
     # @example
     #   reporting.search_sms 'start=2011-02-14&end=2011-02-15'
-    def search_sms(query_string)
-      get("/messages?#{query_string}", @auth, SMSIFIED_HTTP_HEADERS)
+    def search_sms(query_string, &blk)
+      get("/messages?#{query_string}", @auth, SMSIFIED_HTTP_HEADERS, &blk)
     end
   end
 

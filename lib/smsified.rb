@@ -1,11 +1,13 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 %w(
  cgi 
- httparty
  time
+eventmachine
+em-http-request
+yajl
  smsified/helpers 
- smsified/base
  smsified/response 
+ smsified/base
  smsified/subscriptions 
  smsified/reporting 
  smsified/oneapi 
