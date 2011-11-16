@@ -14,8 +14,12 @@ group :development do
   gem 'awesome_print'
   gem 'json'
   gem 'webmock'
+  
 end
 
 group :production do
-  gem 'httparty'
+#  gem 'httparty'
+   gem 'eventmachine'
+   gem 'em-http-request'
+   gem 'yajl-ruby'
 end

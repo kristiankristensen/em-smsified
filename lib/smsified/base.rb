@@ -2,9 +2,8 @@ module Smsified
   SMSIFIED_ONEAPI_PUBLIC_URI = 'https://api.smsified.com/v1'
   SMSIFIED_HTTP_HEADERS      = { 'Content-Type' => 'application/x-www-form-urlencoded','Accept'=>'application/json' }
 
-class Base
-  include HTTParty
-  format :json
+  class Base
+    attr_reader :base_uri, :auth, :destination_address, :sender_address
 
     ##
     # Intantiate a new class to work with OneAPI
@@ -23,8 +22,7 @@ class Base
       raise ArgumentError, ':username required' if options[:username].nil?
       raise ArgumentError, ':password required' if options[:password].nil?
       
-      self.class.debug_output $stdout if options[:debug]
-      self.class.base_uri options[:base_uri] || SMSIFIED_ONEAPI_PUBLIC_URI
+      @base_uri = options[:base_uri] || SMSIFIED_ONEAPI_PUBLIC_URI
       @auth = { :username => options[:username], :password => options[:password] }
       
       @destination_address = options[:destination_address]
@@ -32,23 +30,57 @@ class Base
     end
 
 
-  def get(url, auth, headers)
-    return Response.new self.class.get(url, 
-                          :basic_auth => auth, 
-                          :headers => headers)
-  end
+    def get(url, auth, headers)
+      conn = create_connection_object(url)
 
-  def post(url, body, auth, headers)
-    return Response.new self.class.post(url,
-                                   :body       => body,
-                                   :basic_auth => auth,
-                                   :headers    => headers)
-  end
+      http = conn.get(:head => add_authorization_to_header(headers, auth))
 
-  def delete(url, auth, headers)
-    return Response.new self.class.delete(url, 
-                             :basic_auth => auth, 
-                             :headers    => headers)
+      action = proc do
+        response = Response.new(http.response.parsed, http.response.raw)
+        yield response if block_given?
+      end
+
+      http.callback &action
+      http.errback &action 
+    end
+
+    def delete(url, auth, headers)
+      conn = create_connection_object(url)
+
+      http = conn.delete(:head => add_authorization_to_header(headers, auth))
+
+      action = proc do
+        response = Response.new(http.response.parsed, http.response.raw)
+        yield response if block_given?
+      end
+
+      http.callback &action
+      http.errback &action 
+    end
+
+    def post(url, body, auth, headers)
+      conn = create_connection_object(url)
+
+      http = conn.post(:body => body,
+                       :head => add_authorization_to_header(headers, auth))
+
+      action = proc do
+        response = Response.new(http.response.parsed, http.response.raw)
+        yield response if block_given?
+      end
+
+      http.callback &action
+      http.errback &action 
+    end
+
+    def create_connection_object(url)
+      conn = EM::HttpRequest.new(SMSIFIED_ONEAPI_PUBLIC_URI + url)
+      conn.use JSONify
+      return conn
+    end
+
+    def add_authorization_to_header(headers, auth)
+      return headers.merge({'Authorization' => [auth[:username], auth[:password]]})
+    end
   end
-end
 end

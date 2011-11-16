@@ -5,9 +5,16 @@ GEM
     awesome_print (0.3.2)
     crack (0.1.8)
     diff-lcs (1.1.2)
+    em-http-request (1.0.0)
+      addressable (>= 2.2.3)
+      em-socksify
+      eventmachine (>= 1.0.0.beta.3)
+      http_parser.rb (>= 0.5.2)
+    em-socksify (0.1.0)
+      eventmachine
+    eventmachine (1.0.0.beta.4)
     git (1.2.5)
-    httparty (0.7.7)
-      crack (= 0.1.8)
+    http_parser.rb (0.5.3)
     jeweler (1.5.2)
       bundler (~> 1.0.0)
       git (>= 1.2.5)
@@ -26,6 +33,7 @@ GEM
     webmock (1.7.7)
       addressable (~> 2.2, > 2.2.5)
       crack (>= 0.1.7)
+    yajl-ruby (1.1.0)
     yard (0.6.8)
 
 PLATFORMS
@@ -34,10 +42,12 @@ PLATFORMS
 DEPENDENCIES
   awesome_print
   bundler (~> 1.0.0)
-  httparty
+  em-http-request
+  eventmachine
   jeweler (~> 1.5.2)
   json
   rcov
   rspec (~> 2.3.0)
   webmock
+  yajl-ruby
   yard (~> 0.6.0)

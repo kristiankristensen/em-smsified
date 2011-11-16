@@ -13,13 +13,13 @@ module Smsified
     # @return [Object] A Response Object with http and data instance methods
     # @example
     #   subscriptions.create_inbound_subscription('tel:+14155551212', :notify_url => 'http://foobar.com')
-    def create_inbound_subscription(destination_address, options)
+    def create_inbound_subscription(destination_address, options, &blk)
       query = options.merge({ :destination_address => destination_address })
       
       post("/smsmessaging/inbound/subscriptions", 
            camelcase_keys(query),
            @auth,
-           SMSIFIED_HTTP_HEADERS
+           SMSIFIED_HTTP_HEADERS, &blk
            )
 
     end
@@ -34,11 +34,11 @@ module Smsified
     # @return [Object] A Response Object with http and data instance methods
     # @example
     #   subscriptions.create_outbound_subscription('tel:+14155551212', :notify_url => 'http://foobar.com')    
-    def create_outbound_subscription(sender_address, options)
+    def create_outbound_subscription(sender_address, options, &blk)
       post("/smsmessaging/outbound/#{sender_address}/subscriptions", 
            build_query_string(options),
            @auth,
-           SMSIFIED_HTTP_HEADERS
+           SMSIFIED_HTTP_HEADERS, &blk
            )
     end
     
@@ -49,7 +49,7 @@ module Smsified
     # @return [Object] A Response Object with http and data instance methods
     # @example
     #   subscriptions.delete_inbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c')
-    def delete_inbound_subscription(subscription_id)
+    def delete_inbound_subscription(subscription_id, &blk)
       delete("/smsmessaging/inbound/subscriptions/#{subscription_id}",  @auth,SMSIFIED_HTTP_HEADERS)
     end
     
@@ -60,8 +60,8 @@ module Smsified
     # @return [Object] A Response Object with http and data instance methods
     # @example
     #   subscriptions.delete_outbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c')
-    def delete_outbound_subscription(sender_address)
-      delete("/smsmessaging/outbound/subscriptions/#{sender_address}", @auth,SMSIFIED_HTTP_HEADERS)
+    def delete_outbound_subscription(sender_address, &blk)
+      delete("/smsmessaging/outbound/subscriptions/#{sender_address}", @auth,SMSIFIED_HTTP_HEADERS, &blk)
     end
     
     ##
@@ -71,8 +71,8 @@ module Smsified
     # @return [Object] A Response Object with http and data instance methods
     # @example
     #   subscriptions.inbound_subscriptions('tel:+14155551212')
-    def inbound_subscriptions(destination_address)
-      get("/smsmessaging/inbound/subscriptions?destinationAddress=#{destination_address}",  @auth, SMSIFIED_HTTP_HEADERS)
+    def inbound_subscriptions(destination_address, &blk)
+      get("/smsmessaging/inbound/subscriptions?destinationAddress=#{destination_address}",  @auth, SMSIFIED_HTTP_HEADERS, &blk)
     end
 
     ##
@@ -82,8 +82,8 @@ module Smsified
     # @return [Object] A Response Object with http and data instance methods
     # @example
     #   subscriptions.outbound_subscriptions('tel:+14155551212')
-    def outbound_subscriptions(sender_address)
-      get("/smsmessaging/outbound/subscriptions?senderAddress=#{sender_address}", @auth,SMSIFIED_HTTP_HEADERS)
+    def outbound_subscriptions(sender_address, &blk)
+      get("/smsmessaging/outbound/subscriptions?senderAddress=#{sender_address}", @auth,SMSIFIED_HTTP_HEADERS, &blk)
     end
     
     ##
@@ -97,11 +97,11 @@ module Smsified
     # @return [Object] A Response Object with http and data instance methods
     # @example
     #   subscriptions.update_inbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c', :notify_url => 'foobar')
-    def update_inbound_subscription(subscription_id, options)
+    def update_inbound_subscription(subscription_id, options, &blk)
       post("/smsmessaging/inbound/subscriptions/#{subscription_id}", 
            build_query_string(options),
            @auth,
-           SMSIFIED_HTTP_HEADERS
+           SMSIFIED_HTTP_HEADERS, &blk
            )
     end
     
@@ -116,10 +116,10 @@ module Smsified
     # @return [Object] A Response Object with http and data instance methods
     # @example
     #   subscriptions.update_outbound_subscription('tel:+14155551212', :notify_url => 'foobar')
-    def update_outbound_subscription(sender_address, options)
+    def update_outbound_subscription(sender_address, options, &blk)
       post("/smsmessaging/outbound/#{sender_address}/subscriptions",                                   build_query_string(options), 
            @auth,
-           SMSIFIED_HTTP_HEADERS
+           SMSIFIED_HTTP_HEADERS, &blk
            )
     end
   end

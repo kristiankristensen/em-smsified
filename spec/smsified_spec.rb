@@ -3,13 +3,29 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 # These tests are all local unit tests
 WebMock.disable_net_connect!
 
+def wrap_and_run(obj, message, *args)
+  EventMachine.run_block do
+    obj.send(message, *args) do |response|
+      return response
+    end
+  end
+end
+
+
 describe "Smsified" do
+  def failed
+    EventMachine.stop
+    fail
+  end
+
+
   before(:all) do
     @username       = 'user'
     @password       = 'pass'
     @address        = '14155551212'
     @sender_address = '13035551212'
-    @request_uri = "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests"
+#    @request_uri = "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests"
+    @request_uri = "https://api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests"
   end
   
   describe "Helpers" do
@@ -94,7 +110,9 @@ describe "Smsified" do
     
     it "Should not raise an error if a :sender_address was specified at instantiation" do
       one_api = Smsified::OneAPI.new :username => @username, :password => @password, :debug => true, :sender_address => @sender_address
-      response = one_api.send_sms :address => @address, :message => 'Hola from RSpec!'
+
+      response = wrap_and_run(one_api, :send_sms, :address => @address, :message => 'Hola from RSpec!') 
+
       response.data.should eql @message_sent
     end
     
@@ -118,7 +136,8 @@ describe "Smsified" do
     end
   
     it "Should send an SMS" do
-      response = @one_api.send_sms(:address => @address, :message => 'Hola from RSpec!', :sender_address => @sender_address)
+      response = wrap_and_run(@one_api, :send_sms, :address => @address, :message => 'Hola from RSpec!', :sender_address => @sender_address)
+
       response.data.should eql @message_sent
 
       a_request(:post, @request_uri).

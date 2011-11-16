@@ -26,7 +26,7 @@ module Smsified
     # @example 
     #   one_api.send_sms :address => '14155551212', :message => 'Hi there!', :sender_address => '13035551212'
     #   one_api.send_sms :address => ['14155551212', '13035551212'], :message => 'Hi there!', :sender_address => '13035551212'
-    def send_sms(options)
+    def send_sms(options, &blk)
       raise ArgumentError, 'an options Hash is required' if !options.instance_of?(Hash)
       raise ArgumentError, ':sender_address is required' if options[:sender_address].nil? && @sender_address.nil?
       raise ArgumentError, ':address is required' if options[:address].nil?
@@ -40,7 +40,7 @@ module Smsified
       post("/smsmessaging/outbound/#{options[:sender_address]}/requests",
                                    build_query_string(query_options),
                                    @auth,
-                                   SMSIFIED_HTTP_HEADERS)
+                                   SMSIFIED_HTTP_HEADERS, &blk)
     end
   end
 end
