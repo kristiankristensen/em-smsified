@@ -20,10 +20,10 @@ All of the API methods take an anonymous block which is the method called when t
 Send an SMS:
 
 	require 'rubygems'
-	require 'em-smsified'
 	require 'eventmachine'
+	require 'em-smsified'
 
-	oneapi = Smsified::OneAPI.new(:username => 'user', :password => 'bug.fungus24')
+	oneapi = EventMachine::Smsified::OneAPI.new(:username => 'user', :password => 'bug.fungus24')
 
 	EM.run do
 	       oneapi.send_sms :address => '14155551212', :message => 'Hi there!', :sender_address => '13035551212'
@@ -33,10 +33,10 @@ Send an SMS:
 Find a subscription:
 
 	require 'rubygems'
-	require 'smsified'
 	require 'eventmachine'
+	require 'em-smsified'
 
-	subscriptions = Smsified::Subscriptions.new(:username => 'user', :password => 'bug.fungus24')
+	subscriptions = EventMachine::Smsified::Subscriptions.new(:username => 'user', :password => 'bug.fungus24')
 
 	EM.run do
 		subscriptions.inbound_subscriptions('17177455076')
@@ -45,10 +45,10 @@ Find a subscription:
 Parse the JSON for a callback Incoming Message:
 
     require 'rubygems'
-    require 'smsified'
+    require 'em-smsified'
 
     # Also require your favorite web framework such as Rails or Sinatra
-    incoming_message = Smsified::IncomingMessage.new json_body
+    incoming_message = EventMachine::Smsified::IncomingMessage.new json_body
     puts incoming_message.date_time           # Wed May 11 18:05:54 UTC 2011
     puts incoming_message.destination_address # '16575550100'
     puts incoming_message.message             # 'Inbound test'
