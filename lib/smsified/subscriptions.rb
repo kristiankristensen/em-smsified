@@ -50,7 +50,7 @@ module Smsified
     # @example
     #   subscriptions.delete_inbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c')
     def delete_inbound_subscription(subscription_id, &blk)
-      delete("/smsmessaging/inbound/subscriptions/#{subscription_id}",  @auth,SMSIFIED_HTTP_HEADERS)
+      delete("/smsmessaging/inbound/subscriptions/#{subscription_id}", @auth, SMSIFIED_HTTP_HEADERS, &blk)
     end
     
     ##
@@ -61,7 +61,7 @@ module Smsified
     # @example
     #   subscriptions.delete_outbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c')
     def delete_outbound_subscription(sender_address, &blk)
-      delete("/smsmessaging/outbound/subscriptions/#{sender_address}", @auth,SMSIFIED_HTTP_HEADERS, &blk)
+      delete("/smsmessaging/outbound/subscriptions/#{sender_address}", @auth, SMSIFIED_HTTP_HEADERS, &blk)
     end
     
     ##
