@@ -30,11 +30,14 @@ module EventMachine
         @sender_address      = options[:sender_address]
       end
 
-
-      def get(url, auth, headers)
+      ##
+      # HTTP GET's a request
+      # @param [required, String] :url to GET from
+      #
+      def get(url, headers)
         conn = create_connection_object(url)
 
-        http = conn.get(:head => add_authorization_to_header(headers, auth))
+        http = conn.get(:head => add_authorization_to_header(headers, @auth))
 
         action = proc do
           response = Response.new(http.response.parsed, http)#.response.raw)
@@ -45,10 +48,14 @@ module EventMachine
         http.errback &action 
       end
 
-      def delete(url, auth, headers)
+      ##
+      # HTTP DELETE's a request
+      # @param [required, String] :url to GET from
+      #
+      def delete(url, headers)
         conn = create_connection_object(url)
 
-        http = conn.delete(:head => add_authorization_to_header(headers, auth))
+        http = conn.delete(:head => add_authorization_to_header(headers, @auth))
 
         action = proc do
           response = Response.new(http.response.parsed, http)#.response.raw)
@@ -59,11 +66,15 @@ module EventMachine
         http.errback &action 
       end
 
-      def post(url, body, auth, headers)
+      ##
+      # HTTP POST's a request
+      # @param [required, String] :url to GET from
+      #
+      def post(url, body, headers)
         conn = create_connection_object(url)
 
         http = conn.post(:body => body,
-                         :head => add_authorization_to_header(headers, auth))
+                         :head => add_authorization_to_header(headers, @auth))
 
         action = proc do
           response = Response.new(http.response.parsed, http)#.response.raw)
@@ -74,6 +85,7 @@ module EventMachine
         http.errback &action 
       end
 
+      private
       def create_connection_object(url)
         conn = EM::HttpRequest.new(SMSIFIED_ONEAPI_PUBLIC_URI + url)
         conn.use JSONify
