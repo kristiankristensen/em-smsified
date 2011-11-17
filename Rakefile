@@ -11,14 +11,14 @@ require 'rake'
 
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
-  gem.name = "smsified"
-  gem.homepage = "http://github.com/tropo/smsified-oneapi"
+  gem.name = "em-smsified"
+  gem.homepage = "http://github.com/kristiankristensen/em-smsified"
   gem.license = "MIT"
-  gem.summary = "Gem for consuming the SMSified OneAPI"
-  gem.description = "Gem for consuming the SMSified OneAPI"
-  gem.email = ["jsgoecke@voxeo.com","johntdyer@gmail.com"]
-  gem.authors = ["Jason Goecke","John Dyer"]
-  gem.add_runtime_dependency 'httparty'
+  gem.summary = "Gem for consuming the SMSified OneAPI w EventMachine"
+  gem.description = "Gem for consuming the SMSified OneAPI w EventMachine"
+  gem.email = ["jsgoecke@voxeo.com","johntdyer@gmail.com", "kristian@whizit.dk"]
+  gem.authors = ["Jason Goecke","John Dyer", "Kristian Kristensen"]
+  gem.add_runtime_dependency 'eventmachine'
   gem.files = Dir.glob("{lib}/**/*") + %w(README.md)
   gem.require_path = 'lib'
 end
