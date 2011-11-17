@@ -23,14 +23,13 @@ describe "Smsified" do
     @password       = 'pass'
     @address        = '14155551212'
     @sender_address = '13035551212'
-    #    @request_uri = "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests"
     @request_uri = "https://api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests"
   end
   
   describe "Helpers" do
     before(:all) do
       class Foo
-        include Smsified::Helpers
+        include EventMachine::Smsified::Helpers
         
         attr_reader :keys, :query_string 
         
@@ -62,7 +61,7 @@ describe "Smsified" do
   
   describe "OneAPI" do
     before(:all) do
-      @one_api = Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
+      @one_api = EventMachine::Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
       
       @message_sent = { "resourceReference" => { "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/tel%3A%2B#{@sender_address}/requests/795bd02c8e343b2dfd673b67dd0ee55a" } }
     end
@@ -75,19 +74,19 @@ describe "Smsified" do
     
     it "Should get errors if instantiating without all of the right parameters" do
       begin
-        Smsified::OneAPI.new 'foobar'
+        EventMachine::Smsified::OneAPI.new 'foobar'
       rescue => e
         e.to_s.should eql 'an options Hash is required'
       end
 
       begin
-        Smsified::OneAPI.new(:password => nil)
+        EventMachine::Smsified::OneAPI.new(:password => nil)
       rescue => e
         e.to_s.should eql ':username required'
       end
       
       begin
-        Smsified::OneAPI.new(:username => @username)
+        EventMachine::Smsified::OneAPI.new(:username => @username)
       rescue => e
         e.to_s.should eql ':password required'
       end
@@ -108,7 +107,7 @@ describe "Smsified" do
     end
     
     it "Should not raise an error if a :sender_address was specified at instantiation" do
-      one_api = Smsified::OneAPI.new :username => @username, :password => @password, :debug => true, :sender_address => @sender_address
+      one_api = EventMachine::Smsified::OneAPI.new :username => @username, :password => @password, :debug => true, :sender_address => @sender_address
 
       response = wrap_and_run(one_api, :send_sms, :address => @address, :message => 'Hola from RSpec!') 
 
@@ -130,8 +129,8 @@ describe "Smsified" do
     end
     
     it "Should instantiate a OneAPI object" do
-      oneapi = Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
-      oneapi.instance_of?(Smsified::OneAPI).should eql true
+      oneapi = EventMachine::Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
+      oneapi.instance_of?(EventMachine::Smsified::OneAPI).should eql true
     end
     
     it "Should send an SMS" do
@@ -156,29 +155,29 @@ describe "Smsified" do
   
   describe 'Subscriptions' do
     before(:all) do
-      @subscriptions = Smsified::Subscriptions.new :username => @username, :password => @password, :debug => true
+      @subscriptions = EventMachine::Smsified::Subscriptions.new :username => @username, :password => @password, :debug => true
     end
     
     it "Should instantiate a Subscriptions object" do
-      smsified = Smsified::Subscriptions.new(:username => @username, :password => @password)
-      smsified.instance_of?(Smsified::Subscriptions).should eql true
+      smsified = EventMachine::Smsified::Subscriptions.new(:username => @username, :password => @password)
+      smsified.instance_of?(EventMachine::Smsified::Subscriptions).should eql true
     end
     
     it "Should get errors if instantiating without all of the right parameters" do
       begin
-        Smsified::Subscriptions.new 'foobar'
+        EventMachine::Smsified::Subscriptions.new 'foobar'
       rescue => e
         e.to_s.should eql 'an options Hash is required'
       end
       
       begin
-        Smsified::Subscriptions.new({})
+        EventMachine::Smsified::Subscriptions.new({})
       rescue => e
         e.to_s.should eql ':username required'
       end
       
       begin
-        Smsified::Subscriptions.new(:username => @username)
+        EventMachine::Smsified::Subscriptions.new(:username => @username)
       rescue => e
         e.to_s.should eql ':password required'
       end
@@ -256,7 +255,7 @@ describe "Smsified" do
       end
       
       it "Should let me instantiate a OneAPI object and call subscription methods" do
-        one_api = Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
+        one_api = EventMachine::Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
         inbound_subscriptions = wrap_and_run(one_api, :inbound_subscriptions, @address)
         inbound_subscriptions.data.should eql @no_subscription
       end
@@ -374,7 +373,7 @@ describe "Smsified" do
   
   describe "Reporting" do
     before(:all) do
-      @reporting = Smsified::Reporting.new :username => @username, :password => @password, :debug => true
+      @reporting = EventMachine::Smsified::Reporting.new :username => @username, :password => @password, :debug => true
       
       @delivery_status = {
         "deliveryInfoList" => {
@@ -453,25 +452,25 @@ describe "Smsified" do
     end
     
     it "Should instantiate a Reporting object" do
-      reporting = Smsified::Reporting.new :username => 'smsified_tester_smsified', :password => 'bug.fungus52', :debug => true
-      reporting.instance_of?(Smsified::Reporting).should eql true
+      reporting = EventMachine::Smsified::Reporting.new :username => 'smsified_tester_smsified', :password => 'bug.fungus52', :debug => true
+      reporting.instance_of?(EventMachine::Smsified::Reporting).should eql true
     end
     
     it "Should get errors if instantiating without all of the right parameters" do
       begin
-        Smsified::Reporting.new 'foobar'
+        EventMachine::Smsified::Reporting.new 'foobar'
       rescue => e
         e.to_s.should eql 'an options Hash is required'
       end
       
       begin
-        Smsified::Reporting.new({})
+        EventMachine::Smsified::Reporting.new({})
       rescue => e
         e.to_s.should eql ':username required'
       end
       
       begin
-        Smsified::Reporting.new(:username => @username)
+        EventMachine::Smsified::Reporting.new(:username => @username)
       rescue => e
         e.to_s.should eql ':password required'
       end
@@ -497,7 +496,7 @@ describe "Smsified" do
     end
     
     it "Should not raise an error if a :sender_address was specified at instantiation" do
-      reporting = Smsified::Reporting.new :username => @username, :password => @password, :debug => true, :sender_address => @sender_address
+      reporting = EventMachine::Smsified::Reporting.new :username => @username, :password => @password, :debug => true, :sender_address => @sender_address
       delivery_response = wrap_and_run(reporting, :delivery_status, :request_id => '795bd02c8e343b2dfd673b67dd0ee55a')
       delivery_response.data.should == @delivery_status
     end
@@ -518,7 +517,7 @@ describe "Smsified" do
     end
     
     it "Should let me instantiate a OneAPI object and call reporting methods" do
-      one_api = Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
+      one_api = EventMachine::Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
       delivery_response = wrap_and_run(one_api, :delivery_status, :request_id => '795bd02c8e343b2dfd673b67dd0ee55a', :sender_address => @sender_address)
       delivery_response.data.should eql @delivery_status
       
@@ -541,7 +540,7 @@ describe "Smsified" do
                 }
               }'
       
-      incoming_message = Smsified::IncomingMessage.new json
+      incoming_message = EventMachine::Smsified::IncomingMessage.new json
       incoming_message.date_time.should eql Time.parse '2011-05-11T18:05:54.546Z'
       incoming_message.destination_address.should eql '16575550100'
       incoming_message.message.should eql 'Inbound test'
@@ -550,11 +549,11 @@ describe "Smsified" do
     end
     
     it "Should raise an error if JSON not passed" do
-      lambda { Smsified::IncomingMessage.new 'foobar' }.should raise_error(Smsified::IncomingMessage::MessageError)
+      lambda { EventMachine::Smsified::IncomingMessage.new 'foobar' }.should raise_error(EventMachine::Smsified::IncomingMessage::MessageError)
     end
     
     it "Should raise an error if a different type than an IncomingMessage is passed" do
-      lambda { Smsified::IncomingMessage.new "{ 'foo': 'bar'}" }.should raise_error(Smsified::IncomingMessage::MessageError)
+      lambda { EventMachine::Smsified::IncomingMessage.new "{ 'foo': 'bar'}" }.should raise_error(EventMachine::Smsified::IncomingMessage::MessageError)
     end
   end
 end

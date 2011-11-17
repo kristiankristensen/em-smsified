@@ -14,8 +14,8 @@ require 'eventmachine'
 
 config = YAML.load(File.open('examples/config.yml'))
 
-smsified = Smsified::OneAPI.new(:username       => config['smsified']['username'],
-                                :password       => config['smsified']['password'])
+smsified = EventMachine::Smsified::OneAPI.new(:username => config['smsified']['username'],
+                                              :password => config['smsified']['password'])
 
 sender_address = '14157044517'
 receiver_address = '17177455076'
