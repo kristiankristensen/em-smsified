@@ -18,13 +18,12 @@ describe "Smsified" do
     fail
   end
 
-
   before(:all) do
     @username       = 'user'
     @password       = 'pass'
     @address        = '14155551212'
     @sender_address = '13035551212'
-#    @request_uri = "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests"
+    #    @request_uri = "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests"
     @request_uri = "https://api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests"
   end
   
@@ -49,7 +48,7 @@ describe "Smsified" do
     
     it 'Should camelcase the appropriate keys' do                                  
       camelcased_keys = @foo.keys
-                                  
+      
       camelcased_keys[:destinationAddress].should eql 'foo'
       camelcased_keys[:notifyURL].should eql 'bar'
       camelcased_keys[:clientCorrelator].should eql 'baz'
@@ -73,7 +72,7 @@ describe "Smsified" do
       stub_request(:post, @request_uri).
         to_return(:status => 200, :body => @message_sent.to_json, :headers => {})
     end
-   
+    
     it "Should get errors if instantiating without all of the right parameters" do
       begin
         Smsified::OneAPI.new 'foobar'
@@ -93,7 +92,7 @@ describe "Smsified" do
         e.to_s.should eql ':password required'
       end
     end
-  
+    
     it "Should raise an error if no :sender_address specified" do
       begin
         @one_api.send_sms('foobar')
@@ -134,7 +133,7 @@ describe "Smsified" do
       oneapi = Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
       oneapi.instance_of?(Smsified::OneAPI).should eql true
     end
-  
+    
     it "Should send an SMS" do
       response = wrap_and_run(@one_api, :send_sms, :address => @address, :message => 'Hola from RSpec!', :sender_address => @sender_address)
 
@@ -145,9 +144,9 @@ describe "Smsified" do
     end
     
     it "Should send an SMS to multiple destinations" do
-      response = @one_api.send_sms(:address        => ['14155551212', '13035551212'], 
-                                   :message        => 'Hola from RSpec!', 
-                                   :sender_address => @sender_address)
+      response = wrap_and_run(@one_api, :send_sms, :address        => ['14155551212', '13035551212'], 
+                              :message        => 'Hola from RSpec!', 
+                              :sender_address => @sender_address)
       response.data.should eql @message_sent
 
       a_request(:post, @request_uri).
@@ -190,88 +189,92 @@ describe "Smsified" do
         @no_subscription = { "inboundSubscriptionList" => { "numberOfSubscriptions" => "0" } }
         
         @inbound_subscriptions = {
-                                      "inboundSubscriptionList" => {
-                                            "inboundSubscription" => [
-                                                  {
-                                                         "resourceURL" => "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions/3cf88f9cfd0dae96cbfdf16f18c07411",
-                                                      "subscriptionId" => "3cf88f9cfd0dae96cbfdf16f18c07411",
-                                                  "notificationFormat" => "JSON",
-                                                  "destinationAddress" => "tel:+17177455076",
-                                                           "notifyURL" => "http://98.207.5.162:8080"
-                                              },
-                                                  {
-                                                         "resourceURL" => "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions/75bb5bef239aed425c2966cbb95f33c9",
-                                                      "subscriptionId" => "75bb5bef239aed425c2966cbb95f33c9",
-                                                  "notificationFormat" => "JSON",
-                                                  "destinationAddress" => "tel:+17177455076",
-                                                           "notifyURL" => "http://98.207.5.162:8080"
-                                              }
-                                          ],
-                                          "numberOfSubscriptions" => "2",
-                                                    "resourceURL" => "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions"
+          "inboundSubscriptionList" => {
+            "inboundSubscription" => [
+                                      {
+                                        "resourceURL" => "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions/3cf88f9cfd0dae96cbfdf16f18c07411",
+                                        "subscriptionId" => "3cf88f9cfd0dae96cbfdf16f18c07411",
+                                        "notificationFormat" => "JSON",
+                                        "destinationAddress" => "tel:+17177455076",
+                                        "notifyURL" => "http://98.207.5.162:8080"
+                                      },
+                                      {
+                                        "resourceURL" => "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions/75bb5bef239aed425c2966cbb95f33c9",
+                                        "subscriptionId" => "75bb5bef239aed425c2966cbb95f33c9",
+                                        "notificationFormat" => "JSON",
+                                        "destinationAddress" => "tel:+17177455076",
+                                        "notifyURL" => "http://98.207.5.162:8080"
                                       }
-                                  }
+                                     ],
+            "numberOfSubscriptions" => "2",
+            "resourceURL" => "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions"
+          }
+        }
         
         @outbound_subscriptions = {
-                                      "outboundSubscriptionList" => {
-                                          "numberOfSubscriptions" => "2",
-                                                    "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/subscriptions",
-                                           "outboundSubscription" => [
-                                                  {
-                                                       "senderAddress" => "tel:+17177455076",
-                                                         "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/subscriptions/68faa512b1c81ee0d33a6b97004d1212",
-                                                      "subscriptionId" => "68faa512b1c81ee0d33a6b97004d1212",
-                                                  "notificationFormat" => "JSON",
-                                                           "notifyURL" => "http://98.207.5.162:8080"
-                                              },
-                                                  {
-                                                       "senderAddress" => "tel:+17177455076",
-                                                         "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/subscriptions/6e64fb72cd2a27b8a9460caccbd4dc53",
-                                                      "subscriptionId" => "6e64fb72cd2a27b8a9460caccbd4dc53",
-                                                  "notificationFormat" => "JSON",
-                                                           "notifyURL" => "http://98.207.5.162:8080"
-                                              }
-                                          ]
-                                      }
-                                  }
-        end
-before(:each) do
+          "outboundSubscriptionList" => {
+            "numberOfSubscriptions" => "2",
+            "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/subscriptions",
+            "outboundSubscription" => [
+                                       {
+                                         "senderAddress" => "tel:+17177455076",
+                                         "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/subscriptions/68faa512b1c81ee0d33a6b97004d1212",
+                                         "subscriptionId" => "68faa512b1c81ee0d33a6b97004d1212",
+                                         "notificationFormat" => "JSON",
+                                         "notifyURL" => "http://98.207.5.162:8080"
+                                       },
+                                       {
+                                         "senderAddress" => "tel:+17177455076",
+                                         "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/subscriptions/6e64fb72cd2a27b8a9460caccbd4dc53",
+                                         "subscriptionId" => "6e64fb72cd2a27b8a9460caccbd4dc53",
+                                         "notificationFormat" => "JSON",
+                                         "notifyURL" => "http://98.207.5.162:8080"
+                                       }
+                                      ]
+          }
+        }
+      end
+      before(:each) do
         stub_request(:get, 
-                     "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/inbound/subscriptions?destinationAddress=#{@address}").
+                     "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions?destinationAddress=#{@address}").
+          with(:headers => {'Authorization' => [@username, @password]}).
           to_return(:status => ["200", "OK"],
                     :body   => @no_subscription.to_json)
-                             
+        
         stub_request(:get, 
-                             "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/inbound/subscriptions?destinationAddress=#{@sender_address}").to_return(
-                             :status => ["200", "OK"],
-                             :body   => @inbound_subscriptions.to_json)
+                     "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions?destinationAddress=#{@sender_address}").
+          with(:headers => {'Authorization' => [@username, @password]}).
+          to_return(:status => ["200", "OK"],
+                    :body   => @inbound_subscriptions.to_json)
 
         stub_request(:get, 
-                             "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/subscriptions?senderAddress=#{@sender_address}").to_return(
-                             :status => ["200", "OK"],
-                             :body   => @outbound_subscriptions.to_json)
+                     "https://api.smsified.com/v1/smsmessaging/outbound/subscriptions?senderAddress=#{@sender_address}").
+          with(:headers => {'Authorization' => [@username, @password]}).
+          to_return(
+                    :status => ["200", "OK"],
+                    :body   => @outbound_subscriptions.to_json)
       end
       
       it "Should let me instantiate a OneAPI object and call subscription methods" do
         one_api = Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
-        inbound_subscriptions = one_api.inbound_subscriptions(@address)
+        inbound_subscriptions = wrap_and_run(one_api, :inbound_subscriptions, @address)
         inbound_subscriptions.data.should eql @no_subscription
       end
       
       it "Should find no subscriptions" do
-        inbound_subscriptions = @subscriptions.inbound_subscriptions(@address)
+        inbound_subscriptions = wrap_and_run(@subscriptions, :inbound_subscriptions, @address)
         inbound_subscriptions.data.should eql @no_subscription
       end
       
       it "Should get a list of inbound subscriptions" do
-        inbound_subscriptions = @subscriptions.inbound_subscriptions(@sender_address)
-        inbound_subscriptions.http.code.should eql '200'
+        inbound_subscriptions = wrap_and_run(@subscriptions, :inbound_subscriptions, @sender_address)
+        inbound_subscriptions.http.response_header.status.should eql 200
         inbound_subscriptions.data.should eql @inbound_subscriptions
       end
 
       it "Should get a list of outbound subscriptions" do
-        outbound_subscriptions = @subscriptions.outbound_subscriptions(@sender_address)
-        outbound_subscriptions.http.code.should eql '200'
+        outbound_subscriptions = wrap_and_run(@subscriptions, :outbound_subscriptions, @sender_address)
+        outbound_subscriptions.http.response_header.status.should eql 200
         outbound_subscriptions.data.should eql @outbound_subscriptions
       end
     end
@@ -280,32 +283,34 @@ before(:each) do
       before(:all) do
         @inbound_subscription  = { "resourceReference" => { "resourceURL" => "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions/e636368b7fddac0e93e34ae03bad33dd" } }
         @outbound_subscription = { "resourceReference" => { "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/subscriptions/4bc465cd394c9f5e78802af5ad6bb442" } }
-        @inbound_uri = %r|https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/inbound/subscriptions?|
-        @outbound_uri = %r|https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/17177455076/subscriptions?|
-        end
+        @inbound_uri = %r|https://api.smsified.com/v1/smsmessaging/inbound/subscriptions?|
+        @outbound_uri = %r|https://api.smsified.com/v1/smsmessaging/outbound/17177455076/subscriptions?|
+      end
       
       it 'Should create an inbound subscription' do
         stub_request(:post, @inbound_uri).
+          with(:headers => {'Authorization' => [@username, @password]}).
           to_return(:status => ["200", "OK"],
                     :body   => @inbound_subscription.to_json)
 
-        result = @subscriptions.create_inbound_subscription('17177455076', :notify_url => 'http://foobar.com')
-        result.http.code.should eql '200'
+        result = wrap_and_run(@subscriptions, :create_inbound_subscription, '17177455076', :notify_url => 'http://foobar.com')
+        result.http.response_header.status.should eql 200
         result.data.should eql @inbound_subscription
         a_request(:post, @inbound_uri).
-        with{ |req| req.body == "destinationAddress=17177455076&notifyURL=http%3A%2F%2Ffoobar.com"}.should have_been_made
+          with{ |req| req.body == "destinationAddress=17177455076&notifyURL=http%3A%2F%2Ffoobar.com"}.should have_been_made
       end
-    
+      
       it 'Should create an outbound subscription' do
         stub_request(:post, @outbound_uri).
+          with(:headers => {'Authorization' => [@username, @password]}).
           to_return(:status => ["200", "OK"],
                     :body   => @outbound_subscription.to_json)
 
-        result = @subscriptions.create_outbound_subscription('17177455076', :notify_url => 'http://foobar.com')
-        result.http.code.should eql '200'
+        result = wrap_and_run(@subscriptions, :create_outbound_subscription, '17177455076', :notify_url => 'http://foobar.com')
+        result.http.response_header.status.should eql 200
         result.data.should eql @outbound_subscription
         a_request(:post, @outbound_uri).
-        with{ |req| req.body == "notifyURL=http%3A%2F%2Ffoobar.com"}.should have_been_made
+          with{ |req| req.body == "notifyURL=http%3A%2F%2Ffoobar.com"}.should have_been_made
       end
     end
     
@@ -314,31 +319,33 @@ before(:each) do
         @inbound_subscription  = { "resourceReference" => { "resourceURL" => "https://api.smsified.com/v1/smsmessaging/inbound/subscriptions/e636368b7fddac0e93e34ae03bad33dd" } }
         @outbound_subscription = { "resourceReference" => { "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/subscriptions/4bc465cd394c9f5e78802af5ad6bb442" } }
 
-        @inbound_uri = %r|https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/inbound/subscriptions?|
+        @inbound_uri = %r|https://api.smsified.com/v1/smsmessaging/inbound/subscriptions?|
 
-        @outbound_uri = "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/subscriptions"
+        @outbound_uri = "https://api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/subscriptions"
       end
       
       it 'Should update an inbound subscription' do
         stub_request(:post, @inbound_uri).
+          with(:headers => {'Authorization' => [@username, @password]}).
           to_return(:status => ["200", "OK"],
                     :body   => @inbound_subscription.to_json)
 
-        result = @subscriptions.update_inbound_subscription('c880c96f161f6220d4977b29b4bfc111', :notify_url => 'http://foobar1.com')
+        result = wrap_and_run(@subscriptions, :update_inbound_subscription, 'c880c96f161f6220d4977b29b4bfc111', :notify_url => 'http://foobar1.com')
 
-        result.http.code.should eql '200'
+        result.http.response_header.status.should eql 200
         result.data.should eql @inbound_subscription
         a_request(:post, @inbound_uri).
-        with{ |req| req.body == "notifyURL=http%3A%2F%2Ffoobar1.com"}.should have_been_made
+          with{ |req| req.body == "notifyURL=http%3A%2F%2Ffoobar1.com"}.should have_been_made
       end
       
       it 'Should update an outbound subscription' do
         stub_request(:post, @outbound_uri).
+          with(:headers => {'Authorization' => [@username, @password]}).
           to_return(:status => ["200", "OK"],
                     :body   => @outbound_subscription.to_json)
 
-        result = @subscriptions.update_outbound_subscription(@sender_address, :notify_url => 'http://foobar.com')
-        result.http.code.should eql '200'
+        result = wrap_and_run(@subscriptions, :update_outbound_subscription, @sender_address, :notify_url => 'http://foobar.com')
+        result.http.response_header.status.should eql 200
         result.data.should eql @outbound_subscription
         a_request(:post, @outbound_uri).
           with{ |req| req.body == "notifyURL=http%3A%2F%2Ffoobar.com" }.should have_been_made
@@ -347,18 +354,20 @@ before(:each) do
     
     describe 'Deleting subscriptions' do
       before(:each) do
-        stub_request(:delete, %r|https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/|).
-to_return(:status => ["204", "OK"])        
+        stub_request(:delete, %r|https://api.smsified.com/v1/smsmessaging/?|).
+          with(:headers => {'Authorization' => [@username, @password]}).
+          to_return(:status => ["204", "OK"])        
       end
       
       it "Should delete an inbound subscription" do
-        result = @subscriptions.delete_inbound_subscription('3cf88f9cfd0dae96cbfdf16f18c07411')
-        result.http.code.should eql '204'
+        result = wrap_and_run(@subscriptions, :delete_inbound_subscription, '3cf88f9cfd0dae96cbfdf16f18c07411')
+        result.http.response_header.status.should eql 204
       end
-    
+      
       it "Should delete an outbound subscription" do
-        result = @subscriptions.delete_outbound_subscription('342b61efc3ba9fd2fd992e58903ef050')
-        result.http.code.should eql '204'
+
+        result = wrap_and_run(@subscriptions, :delete_outbound_subscription, '342b61efc3ba9fd2fd992e58903ef050')
+        result.http.response_header.status.should eql 204
       end
     end
   end
@@ -368,76 +377,78 @@ to_return(:status => ["204", "OK"])
       @reporting = Smsified::Reporting.new :username => @username, :password => @password, :debug => true
       
       @delivery_status = {
-          "deliveryInfoList" => {
-              "deliveryInfo" => [
-                      {
-                              "address" => "tel:+14153675082",
-                                "parts" => "1",
-                        "senderAddress" => "tel:+17177455076",
-                            "messageId" => "74ae6147f915eabf87b35b9ea30c5916",
-                                 "code" => "0",
-                      "createdDateTime" => 'Fri May 13 16:14:50 UTC 2011',
-                         "sentDateTime" => 'Fri May 13 16:14:53 UTC 2011',
-                       "deliveryStatus" => "DeliveredToNetwork",
-                              "message" => "Hola from RSpec!",
-                            "direction" => "outbound"
-                  }
-              ],
-               "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/tel%3A%2B17177455076/requests/795bd02c8e343b2dfd673b67dd0ee55a/deliveryInfos"
-          }
+        "deliveryInfoList" => {
+          "deliveryInfo" => [
+                             {
+                               "address" => "tel:+14153675082",
+                               "parts" => "1",
+                               "senderAddress" => "tel:+17177455076",
+                               "messageId" => "74ae6147f915eabf87b35b9ea30c5916",
+                               "code" => "0",
+                               "createdDateTime" => 'Fri May 13 16:14:50 UTC 2011',
+                               "sentDateTime" => 'Fri May 13 16:14:53 UTC 2011',
+                               "deliveryStatus" => "DeliveredToNetwork",
+                               "message" => "Hola from RSpec!",
+                               "direction" => "outbound"
+                             }
+                            ],
+          "resourceURL" => "https://api.smsified.com/v1/smsmessaging/outbound/tel%3A%2B17177455076/requests/795bd02c8e343b2dfd673b67dd0ee55a/deliveryInfos"
+        }
       }
       
       @message = { "parts"     => 1, 
-                   "sent"      => "2011-05-13T16:14:50.480+0000", 
-                   "code"      => "0", 
-                   "body"      => "Hola from RSpec!", 
-                   "messageId" => "74ae6147f915eabf87b35b9ea30c5916", 
-                   "from"      => "17177455076", 
-                   "to"        => "14153675082", 
-                   "direction" => "out", 
-                   "status"    => "success", 
-                   "created"   => "2011-05-13T16:14:50.480+0000"}
+        "sent"      => "2011-05-13T16:14:50.480+0000", 
+        "code"      => "0", 
+        "body"      => "Hola from RSpec!", 
+        "messageId" => "74ae6147f915eabf87b35b9ea30c5916", 
+        "from"      => "17177455076", 
+        "to"        => "14153675082", 
+        "direction" => "out", 
+        "status"    => "success", 
+        "created"   => "2011-05-13T16:14:50.480+0000"}
       
       @message_range = [
-                         {
-                               "parts" => 1,
-                                "sent" => "2011-05-13T20:27:56.690+0000",
-                                "code" => "-1",
-                                "body" => "foobar9446",
-                           "messageId" => "d194e91c32de943ae942ad4043b7905b",
-                                "from" => "17177455076",
-                                  "to" => "14155551",
-                           "direction" => "out",
-                              "status" => "fail",
-                             "created" => "2011-05-13T20:27:56.690+0000"
-                         },
-                         {
-                               "parts" => 1,
-                                "sent" => "2011-05-13T20:27:53.660+0000",
-                                "code" => "-1",
-                                "body" => "foobar4374",
-                           "messageId" => "4d9237b323618ab164fb6d646882da99",
-                                "from" => "17177455076",
-                                  "to" => "14155551212",
-                           "direction" => "out",
-                              "status" => "fail",
-                             "created" => "2011-05-13T20:27:53.660+0000"
-                         }
-                      ]
-end
+                        {
+                          "parts" => 1,
+                          "sent" => "2011-05-13T20:27:56.690+0000",
+                          "code" => "-1",
+                          "body" => "foobar9446",
+                          "messageId" => "d194e91c32de943ae942ad4043b7905b",
+                          "from" => "17177455076",
+                          "to" => "14155551",
+                          "direction" => "out",
+                          "status" => "fail",
+                          "created" => "2011-05-13T20:27:56.690+0000"
+                        },
+                        {
+                          "parts" => 1,
+                          "sent" => "2011-05-13T20:27:53.660+0000",
+                          "code" => "-1",
+                          "body" => "foobar4374",
+                          "messageId" => "4d9237b323618ab164fb6d646882da99",
+                          "from" => "17177455076",
+                          "to" => "14155551212",
+                          "direction" => "out",
+                          "status" => "fail",
+                          "created" => "2011-05-13T20:27:53.660+0000"
+                        }
+                       ]
+    end
     before(:each) do                      
-stub_request(:get, "https://#{@username}:#{@password}@api.smsified.com/v1/messages/74ae6147f915eabf87b35b9ea30c5916").
+      stub_request(:get, "https://api.smsified.com/v1/messages/74ae6147f915eabf87b35b9ea30c5916").
+        with(:headers => {'Authorization' => [@username, @password]}).
         to_return(:status => ["200", "OK"],
-                           :body   => @message.to_json)
+                  :body   => @message.to_json)
       
-      stub_request(:get, "https://#{@username}:#{@password}@api.smsified.com/v1/messages?start=2011-05-12&end=2011-05-12").
+      stub_request(:get, "https://api.smsified.com/v1/messages?start=2011-05-12&end=2011-05-12").
+        with(:headers => {'Authorization' => [@username, @password]}).
         to_return(:status => ["200", "OK"],
                   :headers => {"Content-Type" => "application/json"},
-                           :body   => @message_range.to_json)
+                  :body   => @message_range.to_json)
 
-      stub_request(:get, "https://#{@username}:#{@password}@api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests/795bd02c8e343b2dfd673b67dd0ee55a/deliveryInfos").
+      stub_request(:get, "https://api.smsified.com/v1/smsmessaging/outbound/#{@sender_address}/requests/795bd02c8e343b2dfd673b67dd0ee55a/deliveryInfos").
+        with(:headers => {'Authorization' => [@username, @password]}).
         to_return(:status => ["200", "OK"],
-
                   :body   => @delivery_status.to_json)
     end
     
@@ -467,13 +478,13 @@ stub_request(:get, "https://#{@username}:#{@password}@api.smsified.com/v1/messag
     end
     
     it "should get json by default" do
-      response = @reporting.search_sms 'start=2011-05-12&end=2011-05-12'
-      response.http.content_type.should eql "application/json"
+      response = wrap_and_run(@reporting, :search_sms, 'start=2011-05-12&end=2011-05-12')
+      response.http.response_header["CONTENT_TYPE"].should eql "application/json"
     end
     
     it "Should raise an error if no :sender_address specified" do
       begin
-        @reporting.delivery_status('foobar')
+        wrap_and_run(@reporting, :delivery_status, 'foobar')
       rescue => e
         e.to_s.should eql 'an options Hash is required'
       end
@@ -487,31 +498,31 @@ stub_request(:get, "https://#{@username}:#{@password}@api.smsified.com/v1/messag
     
     it "Should not raise an error if a :sender_address was specified at instantiation" do
       reporting = Smsified::Reporting.new :username => @username, :password => @password, :debug => true, :sender_address => @sender_address
-      delivery_response = reporting.delivery_status :request_id => '795bd02c8e343b2dfd673b67dd0ee55a'
+      delivery_response = wrap_and_run(reporting, :delivery_status, :request_id => '795bd02c8e343b2dfd673b67dd0ee55a')
       delivery_response.data.should == @delivery_status
     end
     
     it "Should retrieve an SMS message" do
-      response = @reporting.retrieve_sms '74ae6147f915eabf87b35b9ea30c5916'
+      response = wrap_and_run(@reporting, :retrieve_sms, '74ae6147f915eabf87b35b9ea30c5916')
       response.data.should eql @message
     end
     
     it "Should retrieve SMS messages based on a query string" do
-      response = @reporting.search_sms 'start=2011-05-12&end=2011-05-12'
+      response = wrap_and_run(@reporting, :search_sms, 'start=2011-05-12&end=2011-05-12')
       response.data.should eql @message_range
     end
     
     it "Should send an SMS and get the Delivery status" do
-      delivery_response = @reporting.delivery_status :request_id => '795bd02c8e343b2dfd673b67dd0ee55a', :sender_address => @sender_address
+      delivery_response = wrap_and_run(@reporting, :delivery_status, :request_id => '795bd02c8e343b2dfd673b67dd0ee55a', :sender_address => @sender_address)
       delivery_response.data.should == @delivery_status
     end
     
     it "Should let me instantiate a OneAPI object and call reporting methods" do
       one_api = Smsified::OneAPI.new :username => @username, :password => @password, :debug => true
-      delivery_response = one_api.delivery_status :request_id => '795bd02c8e343b2dfd673b67dd0ee55a', :sender_address => @sender_address
+      delivery_response = wrap_and_run(one_api, :delivery_status, :request_id => '795bd02c8e343b2dfd673b67dd0ee55a', :sender_address => @sender_address)
       delivery_response.data.should eql @delivery_status
       
-      sms_message = one_api.retrieve_sms '74ae6147f915eabf87b35b9ea30c5916'
+      sms_message = wrap_and_run(one_api, :retrieve_sms, '74ae6147f915eabf87b35b9ea30c5916')
       sms_message.data.should eql @message
     end
   end

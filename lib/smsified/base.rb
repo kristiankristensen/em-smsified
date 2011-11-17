@@ -36,7 +36,7 @@ module Smsified
       http = conn.get(:head => add_authorization_to_header(headers, auth))
 
       action = proc do
-        response = Response.new(http.response.parsed, http.response.raw)
+        response = Response.new(http.response.parsed, http)#.response.raw)
         yield response if block_given?
       end
 
@@ -50,7 +50,7 @@ module Smsified
       http = conn.delete(:head => add_authorization_to_header(headers, auth))
 
       action = proc do
-        response = Response.new(http.response.parsed, http.response.raw)
+        response = Response.new(http.response.parsed, http)#.response.raw)
         yield response if block_given?
       end
 
@@ -65,7 +65,7 @@ module Smsified
                        :head => add_authorization_to_header(headers, auth))
 
       action = proc do
-        response = Response.new(http.response.parsed, http.response.raw)
+        response = Response.new(http.response.parsed, http)#.response.raw)
         yield response if block_given?
       end
 
