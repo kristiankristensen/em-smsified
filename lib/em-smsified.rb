@@ -5,11 +5,11 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 eventmachine
 em-http-request
 yajl
- smsified/helpers 
- smsified/response 
- smsified/base
- smsified/subscriptions 
- smsified/reporting 
- smsified/oneapi 
- smsified/incoming_message
+ em-smsified/helpers 
+ em-smsified/response 
+ em-smsified/base
+ em-smsified/subscriptions 
+ em-smsified/reporting 
+ em-smsified/oneapi 
+ em-smsified/incoming_message
 ).each { |lib| require lib }

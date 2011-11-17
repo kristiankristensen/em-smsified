@@ -17,7 +17,7 @@ module EventMachine
         
         options[:sender_address] = options[:sender_address] || @sender_address
 
-        get("/smsmessaging/outbound/#{options[:sender_address]}/requests/#{options[:request_id]}/deliveryInfos", @auth, SMSIFIED_HTTP_HEADERS, &blk)
+        get("/smsmessaging/outbound/#{options[:sender_address]}/requests/#{options[:request_id]}/deliveryInfos", SMSIFIED_HTTP_HEADERS, &blk)
       end
       
       ##
@@ -28,7 +28,7 @@ module EventMachine
       # @example
       #   reporting.retrieve_sms '74ae6147f915eabf87b35b9ea30c5916'
       def retrieve_sms(message_id, &blk)
-        get("/messages/#{message_id}", @auth, SMSIFIED_HTTP_HEADERS, &blk)
+        get("/messages/#{message_id}", SMSIFIED_HTTP_HEADERS, &blk)
       end
       
       ##
@@ -39,7 +39,7 @@ module EventMachine
       # @example
       #   reporting.search_sms 'start=2011-02-14&end=2011-02-15'
       def search_sms(query_string, &blk)
-        get("/messages?#{query_string}", @auth, SMSIFIED_HTTP_HEADERS, &blk)
+        get("/messages?#{query_string}", SMSIFIED_HTTP_HEADERS, &blk)
       end
     end
 

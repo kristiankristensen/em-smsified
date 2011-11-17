@@ -1,5 +1,9 @@
 module EventMachine
   module Smsified
+
+    ##
+    # Functions as a proxy on the EventMachine HTTP Response so you can get the raw and parsed response
+    #
     class ResponseProxy
       attr_reader :raw, :parsed
 
@@ -9,12 +13,18 @@ module EventMachine
       end
     end
 
+    ##
+    # Used by em-http-request to parse the JSON coming in
+    #
     class JSONify
       def response(resp)
         resp.response = ResponseProxy.new(Yajl::Parser.parse(resp.response), resp.response)
       end
     end
 
+    ##
+    # The result object from the API. Used to access the parsed and raw HTTP response.
+    #
     class Response
       attr_reader :data, :http
       

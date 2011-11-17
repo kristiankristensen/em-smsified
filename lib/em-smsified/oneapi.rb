@@ -20,6 +20,7 @@ module EventMachine
       # @option params [required, String] :message to send with the SMS
       # @option params [optional, String] :sender_address to use with subscriptions, required if not provided on initialization of OneAPI
       # @option params [optional, String] :notify_url to send callbacks to
+      # @param 
       # @return [Object] A Response Object with http and data instance methods
       # @raise [ArgumentError] if :sender_address is not passed as an option when not passed on object creation
       # @raise [ArgumentError] if :address is not provided as an option
@@ -27,6 +28,7 @@ module EventMachine
       # @example 
       #   one_api.send_sms :address => '14155551212', :message => 'Hi there!', :sender_address => '13035551212'
       #   one_api.send_sms :address => ['14155551212', '13035551212'], :message => 'Hi there!', :sender_address => '13035551212'
+      #   one_api.send_sms(:address => '14155551212', :message => 'Hi there!', :sender_address => '13035551212') do |result| ... end
       def send_sms(options, &blk)
         raise ArgumentError, 'an options Hash is required' if !options.instance_of?(Hash)
         raise ArgumentError, ':sender_address is required' if options[:sender_address].nil? && @sender_address.nil?
@@ -40,7 +42,6 @@ module EventMachine
 
         post("/smsmessaging/outbound/#{options[:sender_address]}/requests",
              build_query_string(query_options),
-             @auth,
              SMSIFIED_HTTP_HEADERS, &blk)
       end
     end
