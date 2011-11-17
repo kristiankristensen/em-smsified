@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Class: Smsified::Response</title>
+<title>Class: Smsified::ResponseProxy</title>
 <link rel="stylesheet" href="../css/style.css" type="text/css" media="screen" charset="utf-8" />
 <link rel="stylesheet" href="../css/common.css" type="text/css" media="screen" charset="utf-8" />
 
@@ -26,7 +26,7 @@
     <a href="../_index.html">Index (R)</a> &raquo; 
     <span class='title'><span class='object_link'><a href="../Smsified.html" title="Smsified (module)">Smsified</a></span></span>
      &raquo; 
-    <span class="title">Response</span>
+    <span class="title">ResponseProxy</span>
   
   
   <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
@@ -43,7 +43,7 @@
     
     <iframe id="search_frame"></iframe>
     
-    <div id="content"><h1>Class: Smsified::Response
+    <div id="content"><h1>Class: Smsified::ResponseProxy
   
   
   
@@ -58,7 +58,7 @@
         <ul class="fullTree">
           <li>Object</li>
           
-            <li class="next">Smsified::Response</li>
+            <li class="next">Smsified::ResponseProxy</li>
           
         </ul>
         <a href="#" class="inheritanceTree">show all</a>
@@ -87,7 +87,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#data-instance_method" title="#data (instance method)">- (Object) <strong>data</strong> </a>
+      <a href="#parsed-instance_method" title="#parsed (instance method)">- (Object) <strong>parsed</strong> </a>
     
 
     
@@ -104,7 +104,7 @@
 
   
     <span class="summary_desc"><div class='inline'><p>
-Returns the value of attribute data.
+Returns the value of attribute parsed.
 </p>
 </div></span>
   
@@ -114,7 +114,7 @@ Returns the value of attribute data.
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#http-instance_method" title="#http (instance method)">- (Object) <strong>http</strong> </a>
+      <a href="#raw-instance_method" title="#raw (instance method)">- (Object) <strong>raw</strong> </a>
     
 
     
@@ -131,7 +131,7 @@ Returns the value of attribute data.
 
   
     <span class="summary_desc"><div class='inline'><p>
-Returns the value of attribute http.
+Returns the value of attribute raw.
 </p>
 </div></span>
   
@@ -152,7 +152,7 @@ Returns the value of attribute http.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">- (Response) <strong>initialize</strong>(parsed, raw) </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (ResponseProxy) <strong>initialize</strong>(parsed, raw) </a>
     
 
     
@@ -168,7 +168,7 @@ Returns the value of attribute http.
 
   
     <span class="summary_desc"><div class='inline'><p>
-Provides the standard response for the library.
+A new instance of ResponseProxy.
 </p>
 </div></span>
   
@@ -184,59 +184,38 @@ Provides the standard response for the library.
     <div class="method_details first">
   <p class="signature first" id="initialize-instance_method">
   
-    - (<tt><span class='object_link'><a href="" title="Smsified::Response (class)">Response</a></span></tt>) <strong>initialize</strong>(parsed, raw) 
+    - (<tt><span class='object_link'><a href="" title="Smsified::ResponseProxy (class)">ResponseProxy</a></span></tt>) <strong>initialize</strong>(parsed, raw) 
   
 
   
 </p><div class="docstring">
   <div class="discussion">
     <p>
-Provides the standard response for the library
+A new instance of ResponseProxy
 </p>
 
 
   </div>
 </div>
 <div class="tags">
-  <h3>Parameters:</h3>
-<ul class="param">
   
-    <li>
-      
-        <span class='type'>(<tt>Object</tt>)</span>
-      
-      
-        <span class='name'>an</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>
-HTTParty result object
-</p>
-</div>
-      
-    </li>
-  
-</ul>
-
 </div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-24
-25
-26
-27</pre>
+5
+6
+7
+8</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/smsified/response.rb', line 24</span>
+      <pre class="code"><span class="info file"># File 'lib/smsified/response.rb', line 5</span>
 
 <span class='kw'>def</span> <span class='id initialize'>initialize</span><span class='lparen'>(</span><span class='id parsed'>parsed</span><span class='comma'>,</span> <span class='id raw'>raw</span><span class='rparen'>)</span>
-  <span class='ivar'>@data</span> <span class='op'>=</span> <span class='id parsed'>parsed</span>
-  <span class='ivar'>@http</span> <span class='op'>=</span> <span class='id raw'>raw</span>
+  <span class='ivar'>@parsed</span> <span class='op'>=</span> <span class='id parsed'>parsed</span>
+  <span class='ivar'>@raw</span> <span class='op'>=</span> <span class='id raw'>raw</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -250,18 +229,18 @@ HTTParty result object
     
       
       <span id=""></span>
-      <span id="data-instance_method"></span>
+      <span id="parsed-instance_method"></span>
       <div class="method_details first">
-  <p class="signature first" id="data-instance_method">
+  <p class="signature first" id="parsed-instance_method">
   
-    - (<tt>Object</tt>) <strong>data</strong>  <span class="extras">(readonly)</span>
+    - (<tt>Object</tt>) <strong>parsed</strong>  <span class="extras">(readonly)</span>
   
 
   
 </p><div class="docstring">
   <div class="discussion">
     <p>
-Returns the value of attribute data
+Returns the value of attribute parsed
 </p>
 
 
@@ -275,15 +254,15 @@ Returns the value of attribute data
       <pre class="lines">
 
 
-18
-19
-20</pre>
+3
+4
+5</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/smsified/response.rb', line 18</span>
+      <pre class="code"><span class="info file"># File 'lib/smsified/response.rb', line 3</span>
 
-<span class='kw'>def</span> <span class='id data'>data</span>
-  <span class='ivar'>@data</span>
+<span class='kw'>def</span> <span class='id parsed'>parsed</span>
+  <span class='ivar'>@parsed</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -292,18 +271,18 @@ Returns the value of attribute data
     
       
       <span id=""></span>
-      <span id="http-instance_method"></span>
+      <span id="raw-instance_method"></span>
       <div class="method_details ">
-  <p class="signature " id="http-instance_method">
+  <p class="signature " id="raw-instance_method">
   
-    - (<tt>Object</tt>) <strong>http</strong>  <span class="extras">(readonly)</span>
+    - (<tt>Object</tt>) <strong>raw</strong>  <span class="extras">(readonly)</span>
   
 
   
 </p><div class="docstring">
   <div class="discussion">
     <p>
-Returns the value of attribute http
+Returns the value of attribute raw
 </p>
 
 
@@ -317,15 +296,15 @@ Returns the value of attribute http
       <pre class="lines">
 
 
-18
-19
-20</pre>
+3
+4
+5</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/smsified/response.rb', line 18</span>
+      <pre class="code"><span class="info file"># File 'lib/smsified/response.rb', line 3</span>
 
-<span class='kw'>def</span> <span class='id http'>http</span>
-  <span class='ivar'>@http</span>
+<span class='kw'>def</span> <span class='id raw'>raw</span>
+  <span class='ivar'>@raw</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>

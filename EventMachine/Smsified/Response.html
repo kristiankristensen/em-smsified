@@ -3,16 +3,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Class: Smsified::Response</title>
-<link rel="stylesheet" href="../css/style.css" type="text/css" media="screen" charset="utf-8" />
-<link rel="stylesheet" href="../css/common.css" type="text/css" media="screen" charset="utf-8" />
+<title>Class: EventMachine::Smsified::Response</title>
+<link rel="stylesheet" href="../../css/style.css" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="../../css/common.css" type="text/css" media="screen" charset="utf-8" />
 
 <script type="text/javascript" charset="utf-8">
-  relpath = '..';
+  relpath = '../..';
   if (relpath != '') relpath += '/';
 </script>
-<script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
-<script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
 
   </head>
   <body>
@@ -23,8 +23,8 @@
     <div id="header">
       <div id="menu">
   
-    <a href="../_index.html">Index (R)</a> &raquo; 
-    <span class='title'><span class='object_link'><a href="../Smsified.html" title="Smsified (module)">Smsified</a></span></span>
+    <a href="../../_index.html">Index (R)</a> &raquo; 
+    <span class='title'><span class='object_link'><a href="../../EventMachine.html" title="EventMachine (module)">EventMachine</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Smsified.html" title="EventMachine::Smsified (module)">Smsified</a></span></span>
      &raquo; 
     <span class="title">Response</span>
   
@@ -43,7 +43,7 @@
     
     <iframe id="search_frame"></iframe>
     
-    <div id="content"><h1>Class: Smsified::Response
+    <div id="content"><h1>Class: EventMachine::Smsified::Response
   
   
   
@@ -58,7 +58,7 @@
         <ul class="fullTree">
           <li>Object</li>
           
-            <li class="next">Smsified::Response</li>
+            <li class="next">EventMachine::Smsified::Response</li>
           
         </ul>
         <a href="#" class="inheritanceTree">show all</a>
@@ -74,12 +74,24 @@
   
   
     <dt class="r2 last">Defined in:</dt>
-    <dd class="r2 last">lib/smsified/response.rb</dd>
+    <dd class="r2 last">lib/em-smsified/response.rb</dd>
   
 </dl>
 <div class="clear"></div>
 
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>
+The result object from the API. Used to access the parsed and raw HTTP
+response.
+</p>
 
+
+  </div>
+</div>
+<div class="tags">
+  
+</div>
 
   <h2>Instance Attribute Summary <small>(<a href="#" class="summary_toggle">collapse</a>)</small></h2>
   <ul class="summary">
@@ -184,7 +196,7 @@ Provides the standard response for the library.
     <div class="method_details first">
   <p class="signature first" id="initialize-instance_method">
   
-    - (<tt><span class='object_link'><a href="" title="Smsified::Response (class)">Response</a></span></tt>) <strong>initialize</strong>(parsed, raw) 
+    - (<tt><span class='object_link'><a href="" title="EventMachine::Smsified::Response (class)">Response</a></span></tt>) <strong>initialize</strong>(parsed, raw) 
   
 
   
@@ -226,13 +238,13 @@ HTTParty result object
       <pre class="lines">
 
 
-24
-25
-26
-27</pre>
+35
+36
+37
+38</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/smsified/response.rb', line 24</span>
+      <pre class="code"><span class="info file"># File 'lib/em-smsified/response.rb', line 35</span>
 
 <span class='kw'>def</span> <span class='id initialize'>initialize</span><span class='lparen'>(</span><span class='id parsed'>parsed</span><span class='comma'>,</span> <span class='id raw'>raw</span><span class='rparen'>)</span>
   <span class='ivar'>@data</span> <span class='op'>=</span> <span class='id parsed'>parsed</span>
@@ -275,12 +287,12 @@ Returns the value of attribute data
       <pre class="lines">
 
 
-18
-19
-20</pre>
+29
+30
+31</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/smsified/response.rb', line 18</span>
+      <pre class="code"><span class="info file"># File 'lib/em-smsified/response.rb', line 29</span>
 
 <span class='kw'>def</span> <span class='id data'>data</span>
   <span class='ivar'>@data</span>
@@ -317,12 +329,12 @@ Returns the value of attribute http
       <pre class="lines">
 
 
-18
-19
-20</pre>
+29
+30
+31</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/smsified/response.rb', line 18</span>
+      <pre class="code"><span class="info file"># File 'lib/em-smsified/response.rb', line 29</span>
 
 <span class='kw'>def</span> <span class='id http'>http</span>
   <span class='ivar'>@http</span>
@@ -338,7 +350,7 @@ Returns the value of attribute http
 </div>
     
     <div id="footer">
-  Generated on Thu Nov 17 15:06:41 2011 by 
+  Generated on Thu Nov 17 16:04:35 2011 by 
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.6.8 (ruby-1.9.2).
 </div>

@@ -41,47 +41,75 @@
     
     <iframe id="search_frame"></iframe>
     
-    <div id="content"><div id='filecontents'><h1>smsified</h1>
+    <div id="content"><div id='filecontents'><h1>em-smsified</h1>
 
 <p>SMSified is a simple API for sending and receiving text messages using regular phone numbers or short codes. SMSified uses a simple REST interface based on the GSMA OneAPI standard and is backed by Voxeo - the worlds largest communications cloud. Ruby lib for consuming the SMSified OneAPI.</p>
 
-<p>This is a Ruby gem for consuming the SMSified OneAPI.</p>
+<p>This is a Ruby gem for consuming the SMSified OneAPI with EventMachine.</p>
+
+<p>This library was originally released by Tropo at http://github.com/smsified/smsified-ruby by Jason Goecke and John Dyer. It has been modified to work in the context of EventMachine by Kristian Kristensen.</p>
 
 <h2>Installation</h2>
 
-<pre class="code"><span class='gem identifier id'>gem</span> <span class='install identifier id'>install</span> <span class='smsified identifier id'>smsified</span>
+<pre class="code"><span class='id gem'>gem</span> <span class='id install'>install</span> <span class='id em'>em</span><span class='op'>-</span><span class='id smsified'>smsified</span>
 </pre>
 
 <h2>Example</h2>
 
+<p>All of the API methods take an anonymous block which is the method called when the server returns. It yields the response so you can access the result of executing the API operation. The examples below illustrates this. If you don't care about the result of the operation, don't pass a block.</p>
+
 <p>Send an SMS:</p>
 
-<pre class="code"><span class='require identifier id'>require</span> <span class='string val'>'rubygems'</span>
-<span class='require identifier id'>require</span> <span class='string val'>'smsified'</span>
-<span class='oneapi identifier id'>oneapi</span> <span class='assign token'>=</span> <span class='Smsified constant id'>Smsified</span><span class='colon2 op'>::</span><span class='OneAPI constant id'>OneAPI</span><span class='dot token'>.</span><span class='new identifier id'>new</span><span class='lparen token'>(</span><span class='symbol val'>:username</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'user'</span><span class='comma token'>,</span> <span class='symbol val'>:password</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'bug.fungus24'</span><span class='rparen token'>)</span>
-<span class='oneapi identifier id'>oneapi</span><span class='dot token'>.</span><span class='send_sms identifier id'>send_sms</span> <span class='symbol val'>:address</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'14155551212'</span><span class='comma token'>,</span> <span class='symbol val'>:message</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'Hi there!'</span><span class='comma token'>,</span> <span class='symbol val'>:sender_address</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'13035551212'</span>
+<pre class="code"><span class='id require'>require</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>rubygems</span><span class='tstring_end'>'</span></span>
+<span class='id require'>require</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>em-smsified</span><span class='tstring_end'>'</span></span>
+<span class='id require'>require</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>eventmachine</span><span class='tstring_end'>'</span></span>
+
+<span class='id oneapi'>oneapi</span> <span class='op'>=</span> <span class='const'>Smsified</span><span class='op'>::</span><span class='const'>OneAPI</span><span class='period'>.</span><span class='id new'>new</span><span class='lparen'>(</span><span class='symbol'>:username</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>user</span><span class='tstring_end'>'</span></span><span class='comma'>,</span> <span class='symbol'>:password</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>bug.fungus24</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span>
+
+<span class='const'>EM</span><span class='period'>.</span><span class='id run'>run</span> <span class='kw'>do</span>
+       <span class='id oneapi'>oneapi</span><span class='period'>.</span><span class='id send_sms'>send_sms</span> <span class='symbol'>:address</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>14155551212</span><span class='tstring_end'>'</span></span><span class='comma'>,</span> <span class='symbol'>:message</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>Hi there!</span><span class='tstring_end'>'</span></span><span class='comma'>,</span> <span class='symbol'>:sender_address</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>13035551212</span><span class='tstring_end'>'</span></span>
+<span class='kw'>end</span>
 </pre>
 
 <p>Find a subscription:</p>
 
-<pre class="code"><span class='require identifier id'>require</span> <span class='string val'>'rubygems'</span>
-<span class='require identifier id'>require</span> <span class='string val'>'smsified'</span>
-<span class='subscriptions identifier id'>subscriptions</span> <span class='assign token'>=</span> <span class='Smsified constant id'>Smsified</span><span class='colon2 op'>::</span><span class='Subscriptions constant id'>Subscriptions</span><span class='dot token'>.</span><span class='new identifier id'>new</span><span class='lparen token'>(</span><span class='symbol val'>:username</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'user'</span><span class='comma token'>,</span> <span class='symbol val'>:password</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>'bug.fungus24'</span><span class='rparen token'>)</span>
-<span class='subscriptions identifier id'>subscriptions</span><span class='dot token'>.</span><span class='inbound_subscriptions identifier id'>inbound_subscriptions</span><span class='lparen token'>(</span><span class='string val'>'17177455076'</span><span class='rparen token'>)</span>
+<pre class="code"><span class='id require'>require</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>rubygems</span><span class='tstring_end'>'</span></span>
+<span class='id require'>require</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>smsified</span><span class='tstring_end'>'</span></span>
+<span class='id require'>require</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>eventmachine</span><span class='tstring_end'>'</span></span>
+
+<span class='id subscriptions'>subscriptions</span> <span class='op'>=</span> <span class='const'>Smsified</span><span class='op'>::</span><span class='const'>Subscriptions</span><span class='period'>.</span><span class='id new'>new</span><span class='lparen'>(</span><span class='symbol'>:username</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>user</span><span class='tstring_end'>'</span></span><span class='comma'>,</span> <span class='symbol'>:password</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>bug.fungus24</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span>
+
+<span class='const'>EM</span><span class='period'>.</span><span class='id run'>run</span> <span class='kw'>do</span>
+    <span class='id subscriptions'>subscriptions</span><span class='period'>.</span><span class='id inbound_subscriptions'>inbound_subscriptions</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>17177455076</span><span class='tstring_end'>'</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span>
 </pre>
+
+<p>Parse the JSON for a callback Incoming Message:</p>
+
+<pre class="code"><span class='id require'>require</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>rubygems</span><span class='tstring_end'>'</span></span>
+<span class='id require'>require</span> <span class='tstring'><span class='tstring_beg'>'</span><span class='tstring_content'>smsified</span><span class='tstring_end'>'</span></span>
+
+<span class='comment'># Also require your favorite web framework such as Rails or Sinatra
+</span><span class='id incoming_message'>incoming_message</span> <span class='op'>=</span> <span class='const'>Smsified</span><span class='op'>::</span><span class='const'>IncomingMessage</span><span class='period'>.</span><span class='id new'>new</span> <span class='id json_body'>json_body</span>
+<span class='id puts'>puts</span> <span class='id incoming_message'>incoming_message</span><span class='period'>.</span><span class='id date_time'>date_time</span>           <span class='comment'># Wed May 11 18:05:54 UTC 2011
+</span><span class='id puts'>puts</span> <span class='id incoming_message'>incoming_message</span><span class='period'>.</span><span class='id destination_address'>destination_address</span> <span class='comment'># '16575550100'
+</span><span class='id puts'>puts</span> <span class='id incoming_message'>incoming_message</span><span class='period'>.</span><span class='id message'>message</span>             <span class='comment'># 'Inbound test'
+</span><span class='id puts'>puts</span> <span class='id incoming_message'>incoming_message</span><span class='period'>.</span><span class='id message_id'>message_id</span>          <span class='comment'># 'ef795d3dac56a62fef3ff1852b0c123a'
+</span><span class='id puts'>puts</span> <span class='id incoming_message'>incoming_message</span><span class='period'>.</span><span class='id sender_address'>sender_address</span>      <span class='comment'># '14075550100'
+</span></pre>
 
 <h2>Documentation</h2>
 
-<p>May be found at http://tropo.github.com/smsified &amp; http://smsified.com.</p>
+<p>May be found at http://kristiankristensen.github.com/em-smsified &amp; http://smsified.com.</p>
 
 <h2>License</h2>
 
 <p>MIT - See LICENSE.txt</p></div></div>
     
     <div id="footer">
-  Generated on Fri May 20 09:38:05 2011 by 
+  Generated on Thu Nov 17 16:04:34 2011 by 
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.6.8 (ruby-1.8.7).
+  0.6.8 (ruby-1.9.2).
 </div>
 
   </body>
