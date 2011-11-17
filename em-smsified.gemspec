@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   s.test_files = [
     "examples/local_test.rb",
     "examples/sending_and_subscribing.rb",
-    "spec/smsified_spec.rb",
+    "spec/em-smsified_spec.rb",
     "spec/spec_helper.rb"
   ]
 
