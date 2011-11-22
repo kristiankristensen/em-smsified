@@ -19,6 +19,7 @@ Jeweler::Tasks.new do |gem|
   gem.email = ["jsgoecke@voxeo.com","johntdyer@gmail.com", "kristian@whizit.dk"]
   gem.authors = ["Jason Goecke","John Dyer", "Kristian Kristensen"]
   gem.add_runtime_dependency 'eventmachine'
+  gem.add_runtime_dependency 'eventmachine_httpserver'
   gem.files = Dir.glob("{lib}/**/*") + %w(README.md)
   gem.require_path = 'lib'
 end

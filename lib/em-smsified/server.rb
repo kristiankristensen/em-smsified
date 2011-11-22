@@ -3,14 +3,23 @@ module EventMachine
     class Server < EM::Connection
       include EM::HttpServer
 
+      ##
+      # Sets the block to call when an incoming message arrives
+      #
       def on_incoming_message(&blk)
         @on_incoming_message = blk
       end
       
+      ##
+      # Sets the block to call when a delivery notification arrives
+      #
       def on_delivery_notification(&blk)
         @on_delivery_notification = blk
       end
 
+      ##
+      # Sets the block to call when an unknown message arrives
+      #
       def on_unknown(&blk)
         @on_unknown = blk
       end
@@ -67,7 +76,6 @@ module EventMachine
         end
         
         trigger_on_unknown(@http_post_content)
-
       end
     end
   end

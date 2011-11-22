@@ -7,7 +7,9 @@ module EventMachine
       attr_reader :delivery_status, :code, :message_id, :sender_address, :address, :created_date_time, :sent_date_time, :parts, :direction, :message
 
       ##
-      # Intantiate a new object to provide convenience methods on a Delivery Info Notification
+      # Intantiate a new object to provide convenience methods on a Delivery Info Notification. 
+      # Note: This class only pulls the first delivery info object from the notification. There can be more as per the spec.
+      # http://smsified.com/sms-api-documentation/sending#checking_status
       # 
       # @param [required, String] valid JSON for an Delivery Info Notifcation to be parsed
       # @return [Object] the parsed delivery info notification

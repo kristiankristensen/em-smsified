@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jason Goecke", "John Dyer", "Kristian Kristensen"]
-  s.date = "2011-11-17"
+  s.date = "2011-11-22"
   s.description = "Gem for consuming the SMSified OneAPI w EventMachine"
   s.email = ["jsgoecke@voxeo.com", "johntdyer@gmail.com", "kristian@whizit.dk"]
   s.extra_rdoc_files = [
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
     "lib/em-smsified/oneapi.rb",
     "lib/em-smsified/reporting.rb",
     "lib/em-smsified/response.rb",
+    "lib/em-smsified/server.rb",
     "lib/em-smsified/subscriptions.rb"
   ]
   s.homepage = "http://github.com/kristiankristensen/em-smsified"
@@ -33,7 +34,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = "1.8.10"
   s.summary = "Gem for consuming the SMSified OneAPI w EventMachine"
   s.test_files = [
-    "examples/local_test.rb",
+    "examples/pong_server.rb",
     "examples/sending_and_subscribing.rb",
     "spec/em-smsified_spec.rb",
     "spec/spec_helper.rb"
@@ -53,6 +54,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<webmock>, [">= 0"])
       s.add_development_dependency(%q<bluecloth>, [">= 0"])
       s.add_runtime_dependency(%q<eventmachine>, [">= 0"])
+      s.add_runtime_dependency(%q<eventmachine_httpserver>, [">= 0"])
     else
       s.add_dependency(%q<rspec>, ["~> 2.3.0"])
       s.add_dependency(%q<yard>, ["~> 0.6.0"])
@@ -64,6 +66,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<webmock>, [">= 0"])
       s.add_dependency(%q<bluecloth>, [">= 0"])
       s.add_dependency(%q<eventmachine>, [">= 0"])
+      s.add_dependency(%q<eventmachine_httpserver>, [">= 0"])
     end
   else
     s.add_dependency(%q<rspec>, ["~> 2.3.0"])
@@ -76,6 +79,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<webmock>, [">= 0"])
     s.add_dependency(%q<bluecloth>, [">= 0"])
     s.add_dependency(%q<eventmachine>, [">= 0"])
+    s.add_dependency(%q<eventmachine_httpserver>, [">= 0"])
   end
 end
 
