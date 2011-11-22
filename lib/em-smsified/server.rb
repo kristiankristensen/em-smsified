@@ -1,5 +1,9 @@
 module EventMachine
   module Smsified
+    ##
+    # Allows you to set up a server for incoming SMSified callbacks.
+    # @example
+    #  see examples/pong_server.rb
     class Server < EM::Connection
       include EM::HttpServer
 
@@ -24,24 +28,14 @@ module EventMachine
         @on_unknown = blk
       end
 
-      def trigger_on_incoming_message(msg)
-        @on_incoming_message.call(msg) if @on_incoming_message
-      end
-
-      def trigger_on_delivery_notification(msg)
-        @on_delivery_notification.call(msg) if @on_delivery_notification
-      end
-
-      def trigger_on_unknown(request)
-        @on_unknown.call(request) if @on_unknown
-      end
-
-
       def post_init
         super
         no_environment_strings
       end
 
+      ##
+      # Does processing of incoming HTTP requests.
+      #
       def process_http_request
         # the http request details are available via the following instance variables:
         #   @http_protocol
@@ -71,22 +65,22 @@ module EventMachine
       private
 
       def is_delivery_notification
-          begin
-            msg = EventMachine::Smsified::DeliveryInfoNotification.new(@http_post_content)
-            trigger_on_delivery_notification(msg)
-            return true
-          rescue
-          end
+        begin
+          msg = EventMachine::Smsified::DeliveryInfoNotification.new(@http_post_content)
+          trigger_on_delivery_notification(msg)
+          return true
+        rescue
+        end
         return false
       end
 
       def is_incoming_message
-          begin
-            msg = EventMachine::Smsified::IncomingMessage.new(@http_post_content)
-            trigger_on_incoming_message(msg)
-            return true
-          rescue
-          end
+        begin
+          msg = EventMachine::Smsified::IncomingMessage.new(@http_post_content)
+          trigger_on_incoming_message(msg)
+          return true
+        rescue
+        end
         return false
       end
 
@@ -98,6 +92,18 @@ module EventMachine
         response = EM::DelegatedHttpResponse.new(self)
         response.status = 200
         response.send_response        
+      end
+
+      def trigger_on_incoming_message(msg)
+        @on_incoming_message.call(msg) if @on_incoming_message
+      end
+
+      def trigger_on_delivery_notification(msg)
+        @on_delivery_notification.call(msg) if @on_delivery_notification
+      end
+
+      def trigger_on_unknown(request)
+        @on_unknown.call(request) if @on_unknown
       end
     end
   end
