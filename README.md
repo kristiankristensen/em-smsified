@@ -62,8 +62,8 @@ Server Example
 
 A simple server that just outputs whatever is passed to it from SMSified:
 
-  EM.run do
-  	   EM.start_server '0.0.0.0', 8080, EventMachine::Smsified::Server do |s|
+  	 EM.run do
+       	 EM.start_server '0.0.0.0', 8080, EventMachine::Smsified::Server do |s|
 	       s.on_unknown do |content| 
 	             puts "Unknown received (#{content})"
                end
@@ -79,7 +79,7 @@ A simple server that just outputs whatever is passed to it from SMSified:
 		     puts msg.inspect
                end
            end
-  end
+	 end
 
 Also see examples/pong_server.rb for another server example.
 
