@@ -81,6 +81,9 @@ A simple server that just outputs whatever is passed to it from SMSified:
            end
   end
 
+Also see examples/pong_server.rb for another server example.
+
+If you want to test out the server on your local machine and you're machine isn't publicly available you can use http://localtunnel.com
 
 Documentation
 -------------
