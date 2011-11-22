@@ -549,11 +549,47 @@ describe "Smsified" do
     end
     
     it "Should raise an error if JSON not passed" do
-      lambda { EventMachine::Smsified::IncomingMessage.new 'foobar' }.should raise_error(EventMachine::Smsified::IncomingMessage::MessageError)
+      lambda { EventMachine::Smsified::IncomingMessage.new 'foobar' }.should raise_error(EventMachine::Smsified::MessageError)
     end
     
     it "Should raise an error if a different type than an IncomingMessage is passed" do
-      lambda { EventMachine::Smsified::IncomingMessage.new "{ 'foo': 'bar'}" }.should raise_error(EventMachine::Smsified::IncomingMessage::MessageError)
+      lambda { EventMachine::Smsified::IncomingMessage.new "{ 'foo': 'bar'}" }.should raise_error(EventMachine::Smsified::MessageError)
     end
   end
-end
+  describe 'DeliveryInfoNotifaction' do
+    it 'Should parse an incoming delivery info notification from SMSified' do
+        json = '{ "deliveryInfoNotification": {
+                  "deliveryInfo": {
+                       "deliveryStatus":"DeliveredToNetwork",
+                       "code":"0",
+                       "messageId":"2e0b8d79f1084190d50b1c8c1188ad0d",
+                       "senderAddress":"tel:+12223334455",
+                       "address":"tel:+11112223344",
+                       "createdDateTime":"2011-11-22T18:19:51.584Z",
+                       "sentDateTime":"2011-11-22T18:19:58.848Z",
+                       "parts":"1",
+                       "direction":"outbound",
+                       "message":"Pong"
+                   }
+                 }
+               }'
+
+        del = EventMachine::Smsified::DeliveryInfoNotification.new json
+        del.message_id.should eql '2e0b8d79f1084190d50b1c8c1188ad0d'
+        del.message.should eql 'Pong'
+        del.direction.should eql 'outbound'
+        del.delivery_status.should eql 'DeliveredToNetwork'
+        del.sender_address.should eql 'tel:+12223334455'
+        del.address.should eql 'tel:+11112223344'
+        del.created_date_time.should eql Time.parse '2011-11-22T18:19:51.584Z'
+      end
+
+      it "Should raise an error if JSON not passed" do
+        lambda { EventMachine::Smsified::DeliveryInfoNotification.new 'foobar' }.should raise_error(EventMachine::Smsified::MessageError)
+      end
+      
+      it "Should raise an error if a different type than a DeliveryInfoNotification is passed" do
+        lambda { EventMachine::Smsified::DeliveryInfoNotification.new "{ 'foo': 'bar'}" }.should raise_error(EventMachine::Smsified::MessageError)
+      end
+    end
+  end

@@ -14,6 +14,7 @@ GEM
     em-socksify (0.1.0)
       eventmachine
     eventmachine (1.0.0.beta.4)
+    eventmachine_httpserver (0.2.1)
     git (1.2.5)
     http_parser.rb (0.5.3)
     jeweler (1.5.2)
@@ -46,6 +47,7 @@ DEPENDENCIES
   bundler (~> 1.0.0)
   em-http-request
   eventmachine
+  eventmachine_httpserver
   jeweler (~> 1.5.2)
   json
   rcov

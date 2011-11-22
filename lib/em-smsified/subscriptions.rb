@@ -59,8 +59,8 @@ module EventMachine
       # @return [Object] A Response Object with http and data instance methods
       # @example
       #   subscriptions.delete_outbound_subscription('89edd71c1c7f3d349f9a3a4d5d2d410c')
-      def delete_outbound_subscription(sender_address, &blk)
-        delete("/smsmessaging/outbound/subscriptions/#{sender_address}", SMSIFIED_HTTP_HEADERS, &blk)
+      def delete_outbound_subscription(subscription_id, &blk)
+        delete("/smsmessaging/outbound/subscriptions/#{subscription_id}", SMSIFIED_HTTP_HEADERS, &blk)
       end
       
       ##
