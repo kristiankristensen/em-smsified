@@ -62,24 +62,24 @@ Server Example
 
 A simple server that just outputs whatever is passed to it from SMSified:
 
-  	 EM.run do
-       	 EM.start_server '0.0.0.0', 8080, EventMachine::Smsified::Server do |s|
-	       s.on_unknown do |content| 
-	             puts "Unknown received (#{content})"
-               end
+    EM.run do
+  	 EM.start_server '0.0.0.0', 8080, EventMachine::Smsified::Server do |s|
+	 		 s.on_unknown do |content| 
+			 	      puts "Unknown received (#{content})"
+			 end
 
-	       s.on_delivery_notification do |msg|
-	              puts "Delivery Notification " + Time.now.to_s
-		      puts msg.inspect
-               end
+			 s.on_delivery_notification do |msg|
+			 	      puts "Delivery Notification " + Time.now.to_s
+				      puts msg.inspect
+			 end
       
-	       s.on_incoming_message do |msg|
-	             puts "Message received " + Time.now.to_s
-		     puts "#{msg.sender_address} says '#{msg.message}' to #{msg.destination_address}"
-		     puts msg.inspect
-               end
-           end
+			 s.on_incoming_message do |msg|
+			 	      puts "Message received " + Time.now.to_s
+				      puts "#{msg.sender_address} says '#{msg.message}' to #{msg.destination_address}"
+				      puts msg.inspect
+			 end
 	 end
+    end
 
 Also see examples/pong_server.rb for another server example.
 
