@@ -55,27 +55,49 @@ module EventMachine
         #   @http_post_content
         #   @http_headers
         puts "Request received " + Time.now.to_s
+
+        if (is_post?)
+          if (is_incoming_message || is_delivery_notification)
+            send_ok()
+            return
+          else
+            trigger_on_unknown(@http_post_content)
+          end
+        end
+
+        send_ok()
+      end
+
+      private
+
+      def is_delivery_notification
+          begin
+            msg = EventMachine::Smsified::DeliveryInfoNotification.new(@http_post_content)
+            trigger_on_delivery_notification(msg)
+            return true
+          rescue
+          end
+        return false
+      end
+
+      def is_incoming_message
+          begin
+            msg = EventMachine::Smsified::IncomingMessage.new(@http_post_content)
+            trigger_on_incoming_message(msg)
+            return true
+          rescue
+          end
+        return false
+      end
+
+      def is_post?
+        return @http_request_method == "POST"
+      end
+
+      def send_ok
         response = EM::DelegatedHttpResponse.new(self)
         response.status = 200
-        response.send_response
-
-        return unless @http_request_method == "POST"
-
-        begin
-          msg = EventMachine::Smsified::IncomingMessage.new(@http_post_content)
-          trigger_on_incoming_message(msg)
-          return
-        rescue
-        end
-
-        begin
-          msg = EventMachine::Smsified::DeliveryInfoNotification.new(@http_post_content)
-          trigger_on_delivery_notification(msg)
-          return
-        rescue
-        end
-        
-        trigger_on_unknown(@http_post_content)
+        response.send_response        
       end
     end
   end
