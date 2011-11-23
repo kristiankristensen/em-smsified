@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jason Goecke", "John Dyer", "Kristian Kristensen"]
-  s.date = "2011-11-22"
+  s.date = "2011-11-23"
   s.description = "Gem for consuming the SMSified OneAPI w EventMachine"
   s.email = ["jsgoecke@voxeo.com", "johntdyer@gmail.com", "kristian@whizit.dk"]
   s.extra_rdoc_files = [
@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
     "examples/pong_server.rb",
     "examples/sending_and_subscribing.rb",
     "spec/em-smsified_spec.rb",
+    "spec/server_spec.rb",
     "spec/spec_helper.rb"
   ]
 
