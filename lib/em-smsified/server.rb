@@ -110,8 +110,6 @@ module EventMachine
         #   @http_query_string
         #   @http_post_content
         #   @http_headers
-        puts "Request received " + Time.now.to_s
-        
         handle(@http_request_method, @http_post_content)
 
         send_ok()
